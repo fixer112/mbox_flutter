@@ -15,7 +15,7 @@ import 'package:flutter/foundation.dart';
 class AddressRepository {
   Future<AddressResponse> getAddressList() async {
     final response = await http.get(
-      "${AppConfig.BASE_URL}/user/shipping/address/${user_id.value}",
+      Uri.parse("${AppConfig.BASE_URL}/user/shipping/address/${user_id.value}"),
       headers: {
         "Content-Type": "application/json",
         "Authorization": "Bearer ${access_token.value}"
@@ -40,7 +40,7 @@ class AddressRepository {
       "phone": "$phone"
     });
     final response =
-        await http.post("${AppConfig.BASE_URL}/user/shipping/create",
+        await http.post(Uri.parse("${AppConfig.BASE_URL}/user/shipping/create"),
             headers: {
               "Content-Type": "application/json",
               "Authorization": "Bearer ${access_token.value}"
@@ -51,13 +51,14 @@ class AddressRepository {
   }
 
   Future<CityResponse> getCityList() async {
-    final response = await http.get("${AppConfig.BASE_URL}/cities");
+    final response = await http.get(Uri.parse("${AppConfig.BASE_URL}/cities"));
 
     return cityResponseFromJson(response.body);
   }
 
   Future<CountryResponse> getCountryList() async {
-    final response = await http.get("${AppConfig.BASE_URL}/countries");
+    final response =
+        await http.get(Uri.parse("${AppConfig.BASE_URL}/countries"));
     return countryResponseFromJson(response.body);
   }
 
@@ -68,12 +69,13 @@ class AddressRepository {
       "user_id": "$user_id",
       "city_name": "$city_name"
     });
-    final response = await http.post("${AppConfig.BASE_URL}/shipping_cost",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": "Bearer ${access_token.value}"
-        },
-        body: post_body);
+    final response =
+        await http.post(Uri.parse("${AppConfig.BASE_URL}/shipping_cost"),
+            headers: {
+              "Content-Type": "application/json",
+              "Authorization": "Bearer ${access_token.value}"
+            },
+            body: post_body);
 
     return shippingCostResponseFromJson(response.body);
   }
@@ -83,13 +85,13 @@ class AddressRepository {
   ) async {
     var post_body = jsonEncode(
         {"address_id": "${address_id}", "user_id": "${user_id.value}"});
-    final response =
-        await http.post("${AppConfig.BASE_URL}/update-address-in-cart",
-            headers: {
-              "Content-Type": "application/json",
-              "Authorization": "Bearer ${access_token.value}"
-            },
-            body: post_body);
+    final response = await http.post(
+        Uri.parse("${AppConfig.BASE_URL}/update-address-in-cart"),
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer ${access_token.value}"
+        },
+        body: post_body);
 
     return addressUpdateInCartResponseFromJson(response.body);
   }

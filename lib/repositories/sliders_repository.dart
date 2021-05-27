@@ -4,8 +4,7 @@ import 'package:active_ecommerce_flutter/data_model/slider_response.dart';
 
 class SlidersRepository {
   Future<SliderResponse> getSliders() async {
-    final response =
-        await http.get("${AppConfig.BASE_URL}/sliders");
+    final response = await http.get(Uri.parse("${AppConfig.BASE_URL}/sliders"));
     return sliderResponseFromJson(response.body);
   }
 }

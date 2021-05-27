@@ -505,10 +505,7 @@ class CustomSelectorButton extends StatelessWidget {
             height: 36,
             decoration: BoxDecoration(
                 color: Colors.white,
-                border: Border.all(
-                    color: MyTheme.textfield_grey,
-                    width: .5
-                ),
+                border: Border.all(color: MyTheme.textfield_grey, width: .5),
                 borderRadius: BorderRadius.only(
                     topLeft: Radius.circular(5.0),
                     bottomLeft: Radius.circular(5.0))),
@@ -619,7 +616,7 @@ class CustomSelectorButton extends StatelessWidget {
               builder: (BuildContext context, ScrollController controller) {
                 return Container(
                   decoration: ShapeDecoration(
-                    color: selectorConfig.backgroundColor ??
+                    color: //selectorConfig.backgroundColor ??
                         Theme.of(context).canvasColor,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.only(

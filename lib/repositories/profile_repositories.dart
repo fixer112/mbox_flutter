@@ -8,15 +8,11 @@ import 'package:active_ecommerce_flutter/helpers/shared_value_helper.dart';
 import 'package:flutter/foundation.dart';
 
 class ProfileRepository {
-
   Future<ProfileCountersResponse> getProfileCountersResponse() async {
     final response = await http.get(
-      "${AppConfig.BASE_URL}/profile/counters/${user_id.value}",
-      headers: {
-        "Authorization": "Bearer ${access_token.value}"
-      },
+      Uri.parse("${AppConfig.BASE_URL}/profile/counters/${user_id.value}"),
+      headers: {"Authorization": "Bearer ${access_token.value}"},
     );
     return profileCountersResponseFromJson(response.body);
   }
-
 }

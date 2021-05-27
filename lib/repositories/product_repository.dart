@@ -7,34 +7,36 @@ import 'package:flutter/foundation.dart';
 
 class ProductRepository {
   Future<ProductMiniResponse> getFeturedProducts() async {
-    final response = await http.get("${AppConfig.BASE_URL}/products/featured");
+    final response =
+        await http.get(Uri.parse("${AppConfig.BASE_URL}/products/featured"));
     return productMiniResponseFromJson(response.body);
   }
 
   Future<ProductMiniResponse> getBestSellingProducts() async {
     final response =
-        await http.get("${AppConfig.BASE_URL}/products/best-seller");
+        await http.get(Uri.parse("${AppConfig.BASE_URL}/products/best-seller"));
     return productMiniResponseFromJson(response.body);
   }
 
   Future<ProductMiniResponse> getTodaysDealProducts() async {
     final response =
-        await http.get("${AppConfig.BASE_URL}/products/todays-deal");
+        await http.get(Uri.parse("${AppConfig.BASE_URL}/products/todays-deal"));
     return productMiniResponseFromJson(response.body);
   }
 
   Future<ProductMiniResponse> getFlashDealProducts(
       {@required int id = 0}) async {
-    final response = await http
-        .get("${AppConfig.BASE_URL}/flash-deal-products/" + id.toString());
+    final response = await http.get(Uri.parse(
+        "${AppConfig.BASE_URL}/flash-deal-products/" + id.toString()));
     return productMiniResponseFromJson(response.body);
   }
 
   Future<ProductMiniResponse> getCategoryProducts(
       {@required int id = 0, name = "", page = 1}) async {
-    final response = await http.get("${AppConfig.BASE_URL}/products/category/" +
-        id.toString() +
-        "?page=${page}&name=${name}");
+    final response = await http.get(Uri.parse(
+        "${AppConfig.BASE_URL}/products/category/" +
+            id.toString() +
+            "?page=${page}&name=${name}"));
     return productMiniResponseFromJson(response.body);
   }
 
@@ -44,15 +46,16 @@ class ProductRepository {
         id.toString() +
         "?page=${page}&name=${name}";
 
-    final response = await http.get(url);
+    final response = await http.get(Uri.parse(url));
     return productMiniResponseFromJson(response.body);
   }
 
   Future<ProductMiniResponse> getBrandProducts(
       {@required int id = 0, name = "", page = 1}) async {
-    final response = await http.get("${AppConfig.BASE_URL}/products/brand/" +
-        id.toString() +
-        "?page=${page}&name=${name}");
+    final response = await http.get(Uri.parse(
+        "${AppConfig.BASE_URL}/products/brand/" +
+            id.toString() +
+            "?page=${page}&name=${name}"));
     return productMiniResponseFromJson(response.body);
   }
 
@@ -68,27 +71,27 @@ class ProductRepository {
         "?page=${page}&name=${name}&sort_key=${sort_key}&brands=${brands}&categories=${categories}&min=${min}&max=${max}";
 
     //print("url:" + url);
-    final response = await http.get(url);
+    final response = await http.get(Uri.parse(url));
     return productMiniResponseFromJson(response.body);
   }
 
   Future<ProductDetailsResponse> getProductDetails(
       {@required int id = 0}) async {
-    final response =
-        await http.get("${AppConfig.BASE_URL}/products/" + id.toString());
+    final response = await http
+        .get(Uri.parse("${AppConfig.BASE_URL}/products/" + id.toString()));
     return productDetailsResponseFromJson(response.body);
   }
 
   Future<ProductMiniResponse> getRelatedProducts({@required int id = 0}) async {
-    final response = await http
-        .get("${AppConfig.BASE_URL}/products/related/" + id.toString());
+    final response = await http.get(
+        Uri.parse("${AppConfig.BASE_URL}/products/related/" + id.toString()));
     return productMiniResponseFromJson(response.body);
   }
 
   Future<ProductMiniResponse> getTopFromThisSellerProducts(
       {@required int id = 0}) async {
-    final response = await http
-        .get("${AppConfig.BASE_URL}/products/top-from-seller/" + id.toString());
+    final response = await http.get(Uri.parse(
+        "${AppConfig.BASE_URL}/products/top-from-seller/" + id.toString()));
     return productMiniResponseFromJson(response.body);
   }
 
@@ -97,7 +100,7 @@ class ProductRepository {
     var url =
         "${AppConfig.BASE_URL}/products/variant/price?id=${id.toString()}&color=${color}&variants=${variants}";
 
-    final response = await http.get(url);
+    final response = await http.get(Uri.parse(url));
 
     /*print("url:${url}");
     print("body -------");

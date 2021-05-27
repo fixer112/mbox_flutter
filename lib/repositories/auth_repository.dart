@@ -17,17 +17,17 @@ class AuthRepository {
       @required String email, @required String password) async {
     var post_body = jsonEncode({"email": "${email}", "password": "$password"});
 
-    final response = await http.post("${AppConfig.BASE_URL}/auth/login",
-        headers: {"Content-Type": "application/json"}, body: post_body);
+    final response = await http.post(
+        Uri.parse("${AppConfig.BASE_URL}/auth/login"),
+        headers: {"Content-Type": "application/json"},
+        body: post_body);
     return loginResponseFromJson(response.body);
   }
 
   Future<LogoutResponse> getLogoutResponse() async {
     final response = await http.get(
-      "${AppConfig.BASE_URL}/auth/logout",
-      headers: {
-        "Authorization": "Bearer ${access_token.value}"
-      },
+      Uri.parse("${AppConfig.BASE_URL}/auth/logout"),
+      headers: {"Authorization": "Bearer ${access_token.value}"},
     );
 
     print(response.body);
@@ -49,8 +49,10 @@ class AuthRepository {
       "register_by": "$register_by"
     });
 
-    final response = await http.post("${AppConfig.BASE_URL}/auth/signup",
-        headers: {"Content-Type": "application/json"}, body: post_body);
+    final response = await http.post(
+        Uri.parse("${AppConfig.BASE_URL}/auth/signup"),
+        headers: {"Content-Type": "application/json"},
+        body: post_body);
 
     return signupResponseFromJson(response.body);
   }
@@ -60,8 +62,10 @@ class AuthRepository {
     var post_body =
         jsonEncode({"user_id": "$user_id", "register_by": "$verify_by"});
 
-    final response = await http.post("${AppConfig.BASE_URL}/auth/resend_code",
-        headers: {"Content-Type": "application/json"}, body: post_body);
+    final response = await http.post(
+        Uri.parse("${AppConfig.BASE_URL}/auth/resend_code"),
+        headers: {"Content-Type": "application/json"},
+        body: post_body);
 
     return resendCodeResponseFromJson(response.body);
   }
@@ -71,8 +75,10 @@ class AuthRepository {
     var post_body = jsonEncode(
         {"user_id": "$user_id", "verification_code": "$verification_code"});
 
-    final response = await http.post("${AppConfig.BASE_URL}/auth/confirm_code",
-        headers: {"Content-Type": "application/json"}, body: post_body);
+    final response = await http.post(
+        Uri.parse("${AppConfig.BASE_URL}/auth/confirm_code"),
+        headers: {"Content-Type": "application/json"},
+        body: post_body);
 
     return confirmCodeResponseFromJson(response.body);
   }
@@ -83,7 +89,7 @@ class AuthRepository {
         {"email_or_phone": "$email_or_phone", "send_code_by": "$send_code_by"});
 
     final response = await http.post(
-        "${AppConfig.BASE_URL}/auth/password/forget_request",
+        Uri.parse("${AppConfig.BASE_URL}/auth/password/forget_request"),
         headers: {"Content-Type": "application/json"},
         body: post_body);
 
@@ -98,7 +104,7 @@ class AuthRepository {
         {"verification_code": "$verification_code", "password": "$password"});
 
     final response = await http.post(
-        "${AppConfig.BASE_URL}/auth/password/confirm_reset",
+        Uri.parse("${AppConfig.BASE_URL}/auth/password/confirm_reset"),
         headers: {"Content-Type": "application/json"},
         body: post_body);
 
@@ -111,7 +117,7 @@ class AuthRepository {
         {"email_or_code": "$email_or_code", "verify_by": "$verify_by"});
 
     final response = await http.post(
-        "${AppConfig.BASE_URL}/auth/password/resend_code",
+        Uri.parse("${AppConfig.BASE_URL}/auth/password/resend_code"),
         headers: {"Content-Type": "application/json"},
         body: post_body);
 
@@ -122,7 +128,7 @@ class AuthRepository {
     var post_body = jsonEncode({"access_token": "${access_token.value}"});
 
     final response = await http.post(
-        "${AppConfig.BASE_URL}/get-user-by-access_token",
+        Uri.parse("${AppConfig.BASE_URL}/get-user-by-access_token"),
         headers: {"Content-Type": "application/json"},
         body: post_body);
 
