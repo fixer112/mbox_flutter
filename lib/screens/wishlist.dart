@@ -22,7 +22,7 @@ class _WishlistState extends State<Wishlist> {
 
   @override
   void initState() {
-    if (is_logged_in.value == true) {
+    if (is_logged_in.$ == true) {
       fetchWishlistItems();
     }
 
@@ -109,7 +109,7 @@ class _WishlistState extends State<Wishlist> {
   }
 
   buildWishlist() {
-    if (is_logged_in.value == false) {
+    if (is_logged_in.$ == false) {
       return Container(
           height: 100,
           child: Center(

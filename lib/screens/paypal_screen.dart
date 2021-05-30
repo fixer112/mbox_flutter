@@ -7,17 +7,18 @@ import 'package:active_ecommerce_flutter/repositories/payment_repository.dart';
 import 'package:active_ecommerce_flutter/my_theme.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:active_ecommerce_flutter/screens/order_list.dart';
+import 'package:active_ecommerce_flutter/screens/wallet.dart';
 
 class PaypalScreen extends StatefulWidget {
   int owner_id;
-  double grand_total_value;
+  double amount;
   String payment_type;
   String payment_method_key;
 
   PaypalScreen(
       {Key key,
       this.owner_id = 0,
-      this.grand_total_value = 0.00,
+      this.amount = 0.00,
       this.payment_type = "",
       this.payment_method_key = ""})
       : super(key: key);
@@ -69,7 +70,7 @@ class _PaypalScreenState extends State<PaypalScreen> {
 
   getSetInitialUrl() async {
     var paypalUrlResponse = await PaymentRepository().getPaypalUrlResponse(
-        widget.payment_type, _order_id, widget.grand_total_value);
+        widget.payment_type, _order_id, widget.amount);
 
     if (paypalUrlResponse.result == false) {
       ToastComponent.showDialog(paypalUrlResponse.message, context,
@@ -112,9 +113,15 @@ class _PaypalScreenState extends State<PaypalScreen> {
         Toast.show(responseJSON["message"], context,
             duration: Toast.LENGTH_LONG, gravity: Toast.CENTER);
 
-        Navigator.push(context, MaterialPageRoute(builder: (context) {
-          return OrderList(from_checkout: true);
-        }));
+        if (widget.payment_type == "cart_payment") {
+          Navigator.push(context, MaterialPageRoute(builder: (context) {
+            return OrderList(from_checkout: true);
+          }));
+        } else if (widget.payment_type == "wallet_payment") {
+          Navigator.push(context, MaterialPageRoute(builder: (context) {
+            return Wallet(from_recharge: true);
+          }));
+        }
       }
     });
   }

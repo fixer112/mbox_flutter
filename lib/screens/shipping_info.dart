@@ -68,18 +68,18 @@ class _ShippingInfoState extends State<ShippingInfo> {
     super.initState();
 
     /*print("user data");
-    print(is_logged_in.value);
-    print(access_token.value);
-    print(user_id.value);
-    print(user_name.value);*/
+    print(is_logged_in.$);
+    print(access_token.$);
+    print(user_id.$);
+    print(user_name.$);*/
 
-    if (is_logged_in.value == true) {
+    if (is_logged_in.$ == true) {
       fetchAll();
     }
   }
 
   fetchAll() {
-    if (is_logged_in.value == true) {
+    if (is_logged_in.$ == true) {
       fetchShippingAddressList();
     }
     fetchCityList();
@@ -107,10 +107,9 @@ class _ShippingInfoState extends State<ShippingInfo> {
   }
 
   getSetShippingCost() async {
-
     var shippingCostResponse = await AddressRepository()
         .getShippingCostResponse(
-            widget.owner_id, user_id.value, _selected_address_city_name);
+            widget.owner_id, user_id.$, _selected_address_city_name);
 
     if (shippingCostResponse.result == true) {
       _shipping_cost_string = shippingCostResponse.value_string;
@@ -145,7 +144,7 @@ class _ShippingInfoState extends State<ShippingInfo> {
 
   Future<void> _onRefresh() async {
     reset();
-    if (is_logged_in.value == true) {
+    if (is_logged_in.$ == true) {
       fetchAll();
     }
   }
@@ -171,27 +170,30 @@ class _ShippingInfoState extends State<ShippingInfo> {
     var postal_code = _postalCodeController.text.toString();
     var phone = _phoneController.text.toString();
 
-    if ( address == "") {
+    if (address == "") {
       ToastComponent.showDialog("Enter Address", context,
           gravity: Toast.CENTER, duration: Toast.LENGTH_LONG);
       return;
     }
 
-    if ( _selected_city_name == "") {
+    if (_selected_city_name == "") {
       ToastComponent.showDialog("Select a city", context,
           gravity: Toast.CENTER, duration: Toast.LENGTH_LONG);
       return;
     }
 
-    if ( _selected_country_name == "") {
+    if (_selected_country_name == "") {
       ToastComponent.showDialog("Select a country", context,
           gravity: Toast.CENTER, duration: Toast.LENGTH_LONG);
       return;
     }
 
-    var addressAddResponse = await AddressRepository()
-        .getAddressAddResponse(
-        widget.owner_id, address, _selected_country_name,_selected_city_name,postal_code,phone);
+    var addressAddResponse = await AddressRepository().getAddressAddResponse(
+        address,
+        _selected_country_name,
+        _selected_city_name,
+        postal_code,
+        phone);
 
     if (addressAddResponse.result == false) {
       ToastComponent.showDialog(addressAddResponse.message, context,
@@ -207,18 +209,17 @@ class _ShippingInfoState extends State<ShippingInfo> {
     fetchAll();
   }
 
-  onPressProceed(context) async{
-    if ( _seleted_shipping_address == 0) {
+  onPressProceed(context) async {
+    if (_seleted_shipping_address == 0) {
       ToastComponent.showDialog("Select a country", context,
           gravity: Toast.CENTER, duration: Toast.LENGTH_LONG);
       return;
     }
 
     var addressUpdateInCartResponse = await AddressRepository()
-        .getAddressUpdateInCartResponse(
-        _seleted_shipping_address);
+        .getAddressUpdateInCartResponse(_seleted_shipping_address);
 
-    if(addressUpdateInCartResponse.result == false){
+    if (addressUpdateInCartResponse.result == false) {
       ToastComponent.showDialog(addressUpdateInCartResponse.message, context,
           gravity: Toast.CENTER, duration: Toast.LENGTH_LONG);
       return;
@@ -228,7 +229,9 @@ class _ShippingInfoState extends State<ShippingInfo> {
         gravity: Toast.CENTER, duration: Toast.LENGTH_LONG);
 
     Navigator.push(context, MaterialPageRoute(builder: (context) {
-      return Checkout(owner_id: widget.owner_id,);
+      return Checkout(
+        owner_id: widget.owner_id,
+      );
     })).then((value) {
       onPopped(value);
     });
@@ -626,7 +629,7 @@ class _ShippingInfoState extends State<ShippingInfo> {
   }
 
   buildShippingInfoList() {
-    if (is_logged_in.value == false) {
+    if (is_logged_in.$ == false) {
       return Container(
           height: 100,
           child: Center(

@@ -31,6 +31,8 @@ class _OrderDetailsState extends State<OrderDetails> {
   void initState() {
     fetchAll();
     super.initState();
+
+    print(widget.id);
   }
 
   @override

@@ -1092,7 +1092,7 @@ class _FilterState extends State<Filter> {
                 itemBuilder: (context, index) {
                   // 3
                   return BrandSquareCard(
-                    id:_brandList[index].id,
+                    id: _brandList[index].id,
                     image: _brandList[index].logo,
                     name: _brandList[index].name,
                   );
@@ -1166,7 +1166,7 @@ class _FilterState extends State<Filter> {
                       }));
                     },
                     child: ShopSquareCard(
-                      id:_shopList[index].id,
+                      id: _shopList[index].id,
                       image: _shopList[index].logo,
                       name: _shopList[index].name,
                     ),

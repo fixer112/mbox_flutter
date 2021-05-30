@@ -4,7 +4,7 @@ import 'package:active_ecommerce_flutter/screens/flash_deal_list.dart';
 import 'package:active_ecommerce_flutter/screens/todays_deal_products.dart';
 import 'package:active_ecommerce_flutter/screens/top_selling_products.dart';
 import 'package:active_ecommerce_flutter/screens/category_list.dart';
-import 'package:active_ecommerce_flutter/ui_sections/main_drawer.dart';
+import 'package:active_ecommerce_flutter/ui_sections/drawer.dart';
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:active_ecommerce_flutter/repositories/sliders_repository.dart';
@@ -158,12 +158,11 @@ class _HomeState extends State<Home> {
 
   buildHomeFeaturedProducts(context) {
     return FutureBuilder(
-        future: ProductRepository().getFeturedProducts(),
+        future: ProductRepository().getFeaturedProducts(),
         builder: (context, snapshot) {
           if (snapshot.hasError) {
-            //snapshot.hasError
-            //print("product error");
-            //print(snapshot.error.toString());
+            /*print("product error");
+            print(snapshot.error.toString());*/
             return Container();
           } else if (snapshot.hasData) {
             //snapshot.hasData
@@ -249,7 +248,7 @@ class _HomeState extends State<Home> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: <Widget>[
                             Container(
-                                width: 100,
+                                //width: 100,
                                 height: 100,
                                 child: ClipRRect(
                                     borderRadius: BorderRadius.vertical(
@@ -617,7 +616,7 @@ class _HomeState extends State<Home> {
         child: Container(
           child: Padding(
               padding:
-                  const EdgeInsets.symmetric(vertical: 14.0, horizontal: 0.0),
+                  const EdgeInsets.only(top: 14.0,bottom: 14, right:12), // when notification bell will be shown , the right padding will cease to exist.
               child: GestureDetector(
                   onTap: () {
                     Navigator.push(context,
@@ -636,13 +635,16 @@ class _HomeState extends State<Home> {
             ToastComponent.showDialog("Coming soon", context,
                 gravity: Toast.CENTER, duration: Toast.LENGTH_LONG);
           },
-          child: Padding(
-            padding:
-                const EdgeInsets.symmetric(vertical: 18.0, horizontal: 12.0),
-            child: Image.asset(
-              'assets/bell.png',
-              height: 16,
-              color: MyTheme.dark_grey,
+          child: Visibility(
+            visible: false,
+            child: Padding(
+              padding:
+                  const EdgeInsets.symmetric(vertical: 18.0, horizontal: 12.0),
+              child: Image.asset(
+                'assets/bell.png',
+                height: 16,
+                color: MyTheme.dark_grey,
+              ),
             ),
           ),
         ),

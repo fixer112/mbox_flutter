@@ -60,7 +60,7 @@ class Product {
     name: json["name"],
     thumbnail_image: json["thumbnail_image"],
     base_price: json["base_price"],
-    rating: json["rating"],
+    rating: json["rating"].toInt(),
     sales: json["sales"],
     links: Links.fromJson(json["links"]),
   );

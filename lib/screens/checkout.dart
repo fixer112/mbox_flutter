@@ -3,6 +3,10 @@ import 'package:active_ecommerce_flutter/my_theme.dart';
 import 'package:active_ecommerce_flutter/screens/order_list.dart';
 import 'package:active_ecommerce_flutter/screens/stripe_screen.dart';
 import 'package:active_ecommerce_flutter/screens/paypal_screen.dart';
+import 'package:active_ecommerce_flutter/screens/razorpay_screen.dart';
+import 'package:active_ecommerce_flutter/screens/bkash_screen.dart';
+import 'package:active_ecommerce_flutter/screens/nagad_screen.dart';
+import 'package:active_ecommerce_flutter/screens/sslcommerz_screen.dart';
 import 'package:flutter_icons/flutter_icons.dart';
 import 'package:active_ecommerce_flutter/helpers/shared_value_helper.dart';
 import 'package:active_ecommerce_flutter/repositories/payment_repository.dart';
@@ -45,10 +49,10 @@ class _CheckoutState extends State<Checkout> {
     super.initState();
 
     /*print("user data");
-    print(is_logged_in.value);
-    print(access_token.value);
-    print(user_id.value);
-    print(user_name.value);*/
+    print(is_logged_in.$);
+    print(access_token.$);
+    print(user_id.$);
+    print(user_name.$);*/
 
     fetchAll();
   }
@@ -62,7 +66,7 @@ class _CheckoutState extends State<Checkout> {
   fetchAll() {
     fetchList();
 
-    if (is_logged_in.value == true) {
+    if (is_logged_in.$ == true) {
       fetchSummary();
     }
   }
@@ -126,6 +130,11 @@ class _CheckoutState extends State<Checkout> {
     fetchAll();
   }
 
+  onPopped(value) {
+    reset();
+    fetchAll();
+  }
+
   onCouponApply() async {
     var coupon_code = _couponController.text.toString();
     if (coupon_code == "") {
@@ -177,11 +186,13 @@ class _CheckoutState extends State<Checkout> {
       Navigator.push(context, MaterialPageRoute(builder: (context) {
         return StripeScreen(
           owner_id: widget.owner_id,
-          grand_total_value: _grandTotalValue,
+          amount: _grandTotalValue,
           payment_type: "cart_payment",
           payment_method_key: _selected_payment_method_key,
         );
-      }));
+      })).then((value) {
+        onPopped(value);
+      });
     } else if (_selected_payment_method == "paypal_payment") {
       if (_grandTotalValue == 0.00) {
         ToastComponent.showDialog("Nothing to pay", context,
@@ -192,11 +203,82 @@ class _CheckoutState extends State<Checkout> {
       Navigator.push(context, MaterialPageRoute(builder: (context) {
         return PaypalScreen(
           owner_id: widget.owner_id,
-          grand_total_value: _grandTotalValue,
+          amount: _grandTotalValue,
           payment_type: "cart_payment",
           payment_method_key: _selected_payment_method_key,
         );
-      }));
+      })).then((value) {
+        onPopped(value);
+      });
+      ;
+    } else if (_selected_payment_method == "razorpay") {
+      if (_grandTotalValue == 0.00) {
+        ToastComponent.showDialog("Nothing to pay", context,
+            gravity: Toast.CENTER, duration: Toast.LENGTH_LONG);
+        return;
+      }
+
+      Navigator.push(context, MaterialPageRoute(builder: (context) {
+        return RazorpayScreen(
+          owner_id: widget.owner_id,
+          amount: _grandTotalValue,
+          payment_type: "cart_payment",
+          payment_method_key: _selected_payment_method_key,
+        );
+      })).then((value) {
+        onPopped(value);
+      });
+    } else if (_selected_payment_method == "bkash") {
+      if (_grandTotalValue == 0.00) {
+        ToastComponent.showDialog("Nothing to pay", context,
+            gravity: Toast.CENTER, duration: Toast.LENGTH_LONG);
+        return;
+      }
+
+      Navigator.push(context, MaterialPageRoute(builder: (context) {
+        return BkashScreen(
+          owner_id: widget.owner_id,
+          amount: _grandTotalValue,
+          payment_type: "cart_payment",
+          payment_method_key: _selected_payment_method_key,
+        );
+      })).then((value) {
+        onPopped(value);
+      });
+    } else if (_selected_payment_method == "nagad") {
+      if (_grandTotalValue == 0.00) {
+        ToastComponent.showDialog("Nothing to pay", context,
+            gravity: Toast.CENTER, duration: Toast.LENGTH_LONG);
+        return;
+      }
+
+      Navigator.push(context, MaterialPageRoute(builder: (context) {
+        return NagadScreen(
+          owner_id: widget.owner_id,
+          amount: _grandTotalValue,
+          payment_type: "cart_payment",
+          payment_method_key: _selected_payment_method_key,
+        );
+      })).then((value) {
+        onPopped(value);
+      });
+    } else if (_selected_payment_method == "sslcommerz_payment") {
+      if (_grandTotalValue == 0.00) {
+        ToastComponent.showDialog("Nothing to pay", context,
+            gravity: Toast.CENTER, duration: Toast.LENGTH_LONG);
+        return;
+      }
+
+      Navigator.push(context, MaterialPageRoute(builder: (context) {
+        return SslCommerzScreen(
+          owner_id: widget.owner_id,
+          amount: _grandTotalValue,
+          payment_type: "cart_payment",
+          payment_method_key: _selected_payment_method_key,
+        );
+      })).then((value) {
+        onPopped(value);
+      });
     } else if (_selected_payment_method == "wallet_system") {
       pay_by_wallet();
     } else if (_selected_payment_method == "cash_payment") {

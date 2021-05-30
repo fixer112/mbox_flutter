@@ -8,8 +8,14 @@ import 'package:active_ecommerce_flutter/repositories/wallet_repository.dart';
 import 'package:active_ecommerce_flutter/helpers/shimmer_helper.dart';
 import 'package:active_ecommerce_flutter/custom/toast_component.dart';
 import 'package:toast/toast.dart';
+import 'package:active_ecommerce_flutter/screens/recharge_wallet.dart';
+import 'package:active_ecommerce_flutter/screens/main.dart';
 
 class Wallet extends StatefulWidget {
+
+  Wallet({Key key, this.from_recharge = false}) : super(key: key);
+  final bool from_recharge;
+
   @override
   _WalletState createState() => _WalletState();
 }
@@ -19,6 +25,7 @@ class _WalletState extends State<Wallet> {
       '^\$|^(0|([1-9][0-9]{0,}))(\\.[0-9]{0,})?\$');
   ScrollController _mainScrollController = ScrollController();
   ScrollController _scrollController = ScrollController();
+  TextEditingController _amountController = TextEditingController();
 
   var _balanceDetails = null;
 
@@ -91,60 +98,87 @@ class _WalletState extends State<Wallet> {
     fetchAll();
   }
 
+  onPressProceed(){
+    var amount_String = _amountController.text.toString();
+
+    if(amount_String == ""){
+      ToastComponent.showDialog("Amount cannot be empty", context,
+          gravity: Toast.CENTER, duration: Toast.LENGTH_LONG);
+      return;
+    }
+
+    var amount = double.parse(amount_String);
+
+
+    Navigator.push(context, MaterialPageRoute(builder: (context) {
+      return RechargeWallet(amount: amount );
+    }));
+    
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        backgroundColor: Colors.white,
-        appBar: buildAppBar(context),
-        body: Stack(
-          children: [
-            RefreshIndicator(
-              color: MyTheme.accent_color,
-              backgroundColor: Colors.white,
-              onRefresh: _onPageRefresh,
-              displacement: 10,
-              child: CustomScrollView(
-                controller: _mainScrollController,
-                physics: const BouncingScrollPhysics(
-                    parent: AlwaysScrollableScrollPhysics()),
-                slivers: [
-                  SliverList(
-                    delegate: SliverChildListDelegate([
-                      Container(
-                        height: 276,
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(
-                            top: 0.0, left: 16.0, right: 16.0, bottom: 16.0),
-                        child: buildRechargeList(),
-                      ),
-                    ]),
-                  )
-                ],
-              ),
-            ),
-            //original
-            Align(
-              alignment: Alignment.topCenter,
-              child: Container(
-                width: double.infinity,
-                color: Colors.white,
-                height: 276,
-                //color: Colors.white,
-                child: Padding(
-                  padding: const EdgeInsets.only(
-                      top: 8.0, bottom: 0.0, left: 16.0, right: 16.0),
-                  child: _balanceDetails != null
-                      ? buildTopSection(context)
-                      : ShimmerHelper().buildBasicShimmer(height: 150),
+    return WillPopScope(
+      onWillPop: () {
+        if (widget.from_recharge) {
+          Navigator.push(context, MaterialPageRoute(builder: (context) {
+            return Main();
+          }));
+        }
+      },
+      child: Scaffold(
+          backgroundColor: Colors.white,
+          appBar: buildAppBar(context),
+          body: Stack(
+            children: [
+              RefreshIndicator(
+                color: MyTheme.accent_color,
+                backgroundColor: Colors.white,
+                onRefresh: _onPageRefresh,
+                displacement: 10,
+                child: CustomScrollView(
+                  controller: _mainScrollController,
+                  physics: const BouncingScrollPhysics(
+                      parent: AlwaysScrollableScrollPhysics()),
+                  slivers: [
+                    SliverList(
+                      delegate: SliverChildListDelegate([
+                        Container(
+                          height: 276,
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(
+                              top: 0.0, left: 16.0, right: 16.0, bottom: 16.0),
+                          child: buildRechargeList(),
+                        ),
+                      ]),
+                    )
+                  ],
                 ),
               ),
-            ),
-            Align(
-                alignment: Alignment.bottomCenter,
-                child: buildLoadingContainer())
-          ],
-        ));
+              //original
+              Align(
+                alignment: Alignment.topCenter,
+                child: Container(
+                  width: double.infinity,
+                  color: Colors.white,
+                  height: 276,
+                  //color: Colors.white,
+                  child: Padding(
+                    padding: const EdgeInsets.only(
+                        top: 8.0, bottom: 0.0, left: 16.0, right: 16.0),
+                    child: _balanceDetails != null
+                        ? buildTopSection(context)
+                        : ShimmerHelper().buildBasicShimmer(height: 150),
+                  ),
+                ),
+              ),
+              Align(
+                  alignment: Alignment.bottomCenter,
+                  child: buildLoadingContainer())
+            ],
+          )),
+    );
   }
 
   Container buildLoadingContainer() {
@@ -435,6 +469,7 @@ class _WalletState extends State<Wallet> {
                         child: Container(
                           height: 40,
                           child: TextField(
+                            controller: _amountController,
                             autofocus: false,
                             keyboardType:
                                 TextInputType.numberWithOptions(decimal: true),
@@ -514,10 +549,7 @@ class _WalletState extends State<Wallet> {
                               fontWeight: FontWeight.w600),
                         ),
                         onPressed: () {
-                          ToastComponent.showDialog("Wallet recharge is coming soon in app", context,
-                              gravity: Toast.CENTER,
-                              duration: Toast.LENGTH_LONG);
-                          return;
+                          onPressProceed();
                         },
                       ),
                     )

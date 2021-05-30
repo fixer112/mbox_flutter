@@ -45,10 +45,9 @@ class _SplashState extends State<Splash> {
   }
 
   Future<Widget> loadFromFuture() async {
-
     // <fetch data from server. ex. login>
 
-    return Future.value( Main());
+    return Future.microtask(() => Main());
   }
 
   @override
@@ -57,13 +56,24 @@ class _SplashState extends State<Splash> {
       //comment this
       seconds: 3,
 
-
       //comment this
       navigateAfterSeconds: Main(),
 
-
       //navigateAfterFuture: loadFromFuture(), //uncomment this
-
+      title: Text(
+        "V " + _packageInfo.version,
+        style: TextStyle(
+            fontWeight: FontWeight.bold, fontSize: 14.0, color: Colors.white),
+      ),
+      useLoader: false,
+      loadingText: Text(
+        AppConfig.copyright_text,
+        style: TextStyle(
+          fontWeight: FontWeight.w400,
+          fontSize: 13.0,
+          color: Colors.white,
+        ),
+      ),
       image: Image.asset("assets/splash_screen_logo.png"),
       backgroundImage:
           Image.asset("assets/splash_login_registration_background_image.png"),

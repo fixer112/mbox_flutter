@@ -1,22 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:active_ecommerce_flutter/my_theme.dart';
-import 'package:active_ecommerce_flutter/dummy_data/reviews.dart';
 import 'dart:ui';
-import 'package:intl/intl.dart';
 import 'package:flutter/painting.dart';
-import 'package:flutter_chat_bubble/bubble_type.dart';
-import 'package:flutter_chat_bubble/chat_bubble.dart';
 import 'dart:async';
-import 'package:flutter_chat_bubble/clippers/chat_bubble_clipper_5.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:flutter_icons/flutter_icons.dart';
 import 'package:active_ecommerce_flutter/custom/toast_component.dart';
 import 'package:toast/toast.dart';
 import 'package:flutter/services.dart';
 import 'package:expandable/expandable.dart';
-
+import 'package:active_ecommerce_flutter/repositories/review_repositories.dart';
+import 'package:active_ecommerce_flutter/app_config.dart';
+import 'package:active_ecommerce_flutter/helpers/shimmer_helper.dart';
+import 'package:active_ecommerce_flutter/helpers/shared_value_helper.dart';
 
 class ProductReviews extends StatefulWidget {
+  int id;
+
+  ProductReviews({Key key, this.id}) : super(key: key);
 
   @override
   _ProductReviewsState createState() => _ProductReviewsState();
@@ -24,10 +25,109 @@ class ProductReviews extends StatefulWidget {
 
 class _ProductReviewsState extends State<ProductReviews> {
   final TextEditingController _myReviewTextController = TextEditingController();
-  final ScrollController _reviewScrollController = ScrollController();
+  ScrollController _xcrollController = ScrollController();
+  ScrollController scrollController = ScrollController();
 
-  double _my_rating = existing_rating;
-  String _my_review = existing_review;
+  double _my_rating = 0.0;
+
+  List<dynamic> _reviewList = [];
+  bool _isInitial = true;
+  int _page = 1;
+  int _totalData = 0;
+  bool _showLoadingContainer = false;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+
+    fetchData();
+
+    _xcrollController.addListener(() {
+      //print("position: " + _xcrollController.position.pixels.toString());
+      //print("max: " + _xcrollController.position.maxScrollExtent.toString());
+
+      if (_xcrollController.position.pixels ==
+          _xcrollController.position.maxScrollExtent) {
+        setState(() {
+          _page++;
+        });
+        _showLoadingContainer = true;
+        fetchData();
+      }
+    });
+  }
+
+  fetchData() async {
+    var reviewResponse = await ReviewRepository().getReviewResponse(
+      widget.id,
+      page: _page,
+    );
+    _reviewList.addAll(reviewResponse.reviews);
+    _isInitial = false;
+    _totalData = reviewResponse.meta.total;
+    _showLoadingContainer = false;
+    setState(() {});
+  }
+
+  reset() {
+    _reviewList.clear();
+    _isInitial = true;
+    _totalData = 0;
+    _page = 1;
+    _showLoadingContainer = false;
+    _my_rating = 0.0;
+    _myReviewTextController.text = "";
+    setState(() {});
+  }
+
+  Future<void> _onRefresh() async {
+    reset();
+    fetchData();
+  }
+
+  onTapReviewSubmit(context) async {
+    if (is_logged_in.$ == false) {
+      ToastComponent.showDialog("You need to login to give a review", context,
+          gravity: Toast.CENTER, duration: Toast.LENGTH_LONG);
+      return;
+    }
+
+    //return;
+    var myReviewText = _myReviewTextController.text.toString();
+    //print(chatText);
+    if (myReviewText == "") {
+      ToastComponent.showDialog("Review cannot be empty", context,
+          gravity: Toast.CENTER, duration: Toast.LENGTH_LONG);
+      return;
+    } else if (_my_rating < 1.0) {
+      ToastComponent.showDialog("Atleast one star must be given", context,
+          gravity: Toast.CENTER, duration: Toast.LENGTH_LONG);
+      return;
+    }
+
+    var reviewSubmitResponse = await ReviewRepository()
+        .getReviewSubmitResponse(widget.id, _my_rating.toInt(), myReviewText);
+
+    if (reviewSubmitResponse.result == false) {
+      ToastComponent.showDialog(reviewSubmitResponse.message, context,
+          gravity: Toast.CENTER, duration: Toast.LENGTH_LONG);
+      return;
+    }
+
+    ToastComponent.showDialog(reviewSubmitResponse.message, context,
+        gravity: Toast.CENTER, duration: Toast.LENGTH_LONG);
+
+    reset();
+    fetchData();
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    _xcrollController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -36,43 +136,58 @@ class _ProductReviewsState extends State<ProductReviews> {
         appBar: buildAppBar(context),
         body: Stack(
           children: [
-            CustomScrollView(
-              slivers: [
-                SliverList(
-                  delegate: SliverChildListDelegate([
-                    Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: buildProductReviewsList(),
-                    ),
-                    Container(
-                      height: 120,
-                    )
-                  ]),
-                )
-              ],
-            ),
-            //original
+            RefreshIndicator(
+              color: MyTheme.accent_color,
+              backgroundColor: Colors.white,
+              onRefresh: _onRefresh,
+              displacement: 0,
+              child: CustomScrollView(
+                controller: _xcrollController,
+                physics: const BouncingScrollPhysics(
+                    parent: AlwaysScrollableScrollPhysics()),
+                slivers: [
+                  SliverList(
+                    delegate: SliverChildListDelegate([
+                      Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: buildProductReviewsList(),
+                      ),
+                      Container(
+                        height: 120,
+                      )
+                    ]),
+                  )
+                ],
+              ),
+            ), //original
+
             Align(
               alignment: Alignment.bottomCenter,
-              child: ClipRRect(
-                child: BackdropFilter(
-                  filter: ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),
-                  child: Container(
-                    decoration: new BoxDecoration(
-                        color: Colors.white54.withOpacity(0.6)),
-                    height: 120,
-                    //color: Colors.white,
-                    child: Padding(
-                      padding: const EdgeInsets.only(
-                          top: 8.0, bottom: 8.0, left: 16.0, right: 16.0),
-                      child: buildGiveReviewSection(context),
-                    ),
-                  ),
-                ),
-              ),
-            )
+              child: buildBottomBar(context),
+            ),
+            Align(
+                alignment: Alignment.bottomCenter,
+                child: buildLoadingContainer()),
           ],
         ));
+  }
+
+  buildBottomBar(BuildContext context) {
+    return ClipRRect(
+      child: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),
+        child: Container(
+          decoration: new BoxDecoration(color: Colors.white54.withOpacity(0.6)),
+          height: 120,
+          //color: Colors.white,
+          child: Padding(
+            padding: const EdgeInsets.only(
+                top: 8.0, bottom: 8.0, left: 16.0, right: 16.0),
+            child: buildGiveReviewSection(context),
+          ),
+        ),
+      ),
+    );
   }
 
   AppBar buildAppBar(BuildContext context) {
@@ -93,27 +208,42 @@ class _ProductReviewsState extends State<ProductReviews> {
     );
   }
 
-  SingleChildScrollView buildProductReviewsList() {
-    return SingleChildScrollView(
-      child: ListView.builder(
-        controller: _reviewScrollController,
-        itemCount: reviewList.length,
-        scrollDirection: Axis.vertical,
-        physics: NeverScrollableScrollPhysics(),
-        shrinkWrap: true,
-        itemBuilder: (context, index) {
-          return Padding(
-            padding: const EdgeInsets.only(bottom: 0.0),
-            child: buildProductReviewsItem(index),
-          );
-        },
-      ),
-    );
+  buildProductReviewsList() {
+    if (_isInitial && _reviewList.length == 0) {
+      return SingleChildScrollView(
+          child: ShimmerHelper()
+              .buildListShimmer(item_count: 10, item_height: 75.0));
+    } else if (_reviewList.length > 0) {
+      return SingleChildScrollView(
+        child: ListView.builder(
+          controller: scrollController,
+          itemCount: _reviewList.length,
+          scrollDirection: Axis.vertical,
+          physics: NeverScrollableScrollPhysics(),
+          shrinkWrap: true,
+          itemBuilder: (context, index) {
+            return Padding(
+              padding: const EdgeInsets.only(bottom: 0.0),
+              child: buildProductReviewsItem(index),
+            );
+          },
+        ),
+      );
+    } else if (_totalData == 0) {
+      return Container(
+        height: 300,
+        child: Center(
+            child: Text(
+                "No reviews yet. Be the first one to review this product")),
+      );
+    } else {
+      return Container(); // should never be happening
+    }
   }
 
   buildProductReviewsItem(index) {
     return Padding(
-      padding: const EdgeInsets.only(bottom:8.0),
+      padding: const EdgeInsets.only(bottom: 8.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -128,8 +258,13 @@ class _ProductReviewsState extends State<ProductReviews> {
                 //shape: BoxShape.rectangle,
               ),
               child: ClipRRect(
-                  borderRadius: BorderRadius.circular(35),
-                  child: Image.asset( reviewList[index].image)),
+                borderRadius: BorderRadius.circular(35),
+                child: FadeInImage.assetNetwork(
+                  placeholder: 'assets/placeholder.png',
+                  image: AppConfig.BASE_PATH + _reviewList[index].avatar,
+                  fit: BoxFit.cover,
+                ),
+              ),
             ),
             Column(
               children: [
@@ -143,7 +278,7 @@ class _ProductReviewsState extends State<ProductReviews> {
                       mainAxisSize: MainAxisSize.max,
                       children: [
                         Text(
-                          reviewList[index].name,
+                          _reviewList[index].user_name,
                           textAlign: TextAlign.left,
                           overflow: TextOverflow.ellipsis,
                           maxLines: 1,
@@ -154,43 +289,44 @@ class _ProductReviewsState extends State<ProductReviews> {
                               fontWeight: FontWeight.w600),
                         ),
                         Padding(
-                          padding: const EdgeInsets.only(bottom:4.0),
-                          child: Text(reviewList[index].date,style: TextStyle(color: MyTheme.medium_grey),),
+                          padding: const EdgeInsets.only(bottom: 4.0),
+                          child: Text(
+                            _reviewList[index].time,
+                            style: TextStyle(color: MyTheme.medium_grey),
+                          ),
                         ),
                       ],
                     ),
                   ),
                 ),
-
               ],
             ),
             Spacer(),
             Padding(
-              padding: const EdgeInsets.only(top:0.0,bottom: 0.0,left: 16.0),
-              child: Container(
-                child: RatingBar(
-                  itemSize: 12.0,
-                  ignoreGestures: true,
-                  initialRating: reviewList[index].rating,
-                  direction: Axis.horizontal,
-                  allowHalfRating: false,
-                  itemCount: 5,
-                  ratingWidget: RatingWidget(
-                    full: Icon(FontAwesome.star, color: Colors.amber),
-                    empty:
-                    Icon(FontAwesome.star, color: Color.fromRGBO(224, 224, 225, 1)),
+                padding:
+                    const EdgeInsets.only(top: 0.0, bottom: 0.0, left: 16.0),
+                child: Container(
+                  child: RatingBar(
+                    itemSize: 12.0,
+                    ignoreGestures: true,
+                    initialRating: _reviewList[index].rating,
+                    direction: Axis.horizontal,
+                    allowHalfRating: false,
+                    itemCount: 5,
+                    ratingWidget: RatingWidget(
+                      full: Icon(FontAwesome.star, color: Colors.amber),
+                      empty: Icon(FontAwesome.star,
+                          color: Color.fromRGBO(224, 224, 225, 1)),
+                    ),
+                    itemPadding: EdgeInsets.only(right: 1.0),
+                    onRatingUpdate: (rating) {
+                      print(rating);
+                    },
                   ),
-                  itemPadding: EdgeInsets.only(right: 1.0),
-                  onRatingUpdate: (rating) {
-                    print(rating);
-                  },
-                ),
-              )
-            )
+                ))
           ]),
-
           Padding(
-            padding: const EdgeInsets.only(left:56.0),
+            padding: const EdgeInsets.only(left: 56.0),
             child: buildExpandableDescription(index),
           )
         ],
@@ -199,41 +335,59 @@ class _ProductReviewsState extends State<ProductReviews> {
   }
 
   ExpandableNotifier buildExpandableDescription(index) {
-
     return ExpandableNotifier(
         child: ScrollOnExpand(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Expandable(
-                collapsed: Container(
-                    height:reviewList[index].text.length > 100 ? 32 : 16, child: Text(reviewList[index].text,style: TextStyle(color: MyTheme.font_grey))),
-                expanded: Container(child: Text(reviewList[index].text,style: TextStyle(color: MyTheme.font_grey))),
-              ),
-              reviewList[index].text.length > 100 ? Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: <Widget>[
-                  Builder(
-                    builder: (context) {
-                      var controller = ExpandableController.of(context);
-                      return FlatButton(
-                        child: Text(
-                          !controller.expanded ? "View More" : "Show Less",
-                          style: TextStyle(color: MyTheme.font_grey, fontSize: 11),
-                        ),
-                        onPressed: () {
-                          controller.toggle();
-                        },
-                      );
-                    },
-                  ),
-                ],
-              ) : Container(),
-            ],
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Expandable(
+            collapsed: Container(
+                height: _reviewList[index].comment.length > 100 ? 32 : 16,
+                child: Text(_reviewList[index].comment,
+                    style: TextStyle(color: MyTheme.font_grey))),
+            expanded: Container(
+                child: Text(_reviewList[index].comment,
+                    style: TextStyle(color: MyTheme.font_grey))),
           ),
-        ));
+          _reviewList[index].comment.length > 100
+              ? Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: <Widget>[
+                    Builder(
+                      builder: (context) {
+                        var controller = ExpandableController.of(context);
+                        return FlatButton(
+                          child: Text(
+                            !controller.expanded ? "View More" : "Show Less",
+                            style: TextStyle(
+                                color: MyTheme.font_grey, fontSize: 11),
+                          ),
+                          onPressed: () {
+                            controller.toggle();
+                          },
+                        );
+                      },
+                    ),
+                  ],
+                )
+              : Container(),
+        ],
+      ),
+    ));
   }
 
+  Container buildLoadingContainer() {
+    return Container(
+      height: _showLoadingContainer ? 36 : 0,
+      width: double.infinity,
+      color: Colors.white,
+      child: Center(
+        child: Text(_totalData == _reviewList.length
+            ? "No More Reviews"
+            : "Loading More Reviews ..."),
+      ),
+    );
+  }
 
   buildGiveReviewSection(BuildContext context) {
     return Column(
@@ -242,7 +396,7 @@ class _ProductReviewsState extends State<ProductReviews> {
           padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
           child: RatingBar.builder(
             itemSize: 20.0,
-            initialRating: 0,
+            initialRating: _my_rating,
             minRating: 1,
             direction: Axis.horizontal,
             allowHalfRating: false,
@@ -299,16 +453,7 @@ class _ProductReviewsState extends State<ProductReviews> {
               padding: const EdgeInsets.all(8.0),
               child: GestureDetector(
                 onTap: () {
-                  var myReviewText = _myReviewTextController.text.toString();
-                  //print(chatText);
-                  if (myReviewText == "") {
-                    ToastComponent.showDialog("Review cannot be empty", context,
-                        gravity: Toast.CENTER, duration: Toast.LENGTH_LONG);
-                  }
-                  if (_my_rating < 1.0) {
-                    ToastComponent.showDialog("Atleast one star must be given", context,
-                        gravity: Toast.CENTER, duration: Toast.LENGTH_LONG);
-                  }
+                  onTapReviewSubmit(context);
                 },
                 child: Container(
                   width: 40,
@@ -336,8 +481,4 @@ class _ProductReviewsState extends State<ProductReviews> {
       ],
     );
   }
-
-
-
-
 }

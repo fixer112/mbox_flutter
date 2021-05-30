@@ -126,12 +126,12 @@ class _OtpState extends State<Otp> {
                       width: _screen_width * (3 / 4),
                       child: _verify_by == "email"
                           ? Text(
-                              "Enter the verification code sent to your email.",
+                              "Enter the verification code that sent to your email recently.",
                               textAlign: TextAlign.center,
                               style: TextStyle(
                                   color: MyTheme.dark_grey, fontSize: 14))
                           : Text(
-                              "Enter the verification code sent to your Mobile Number.",
+                              "Enter the verification code that sent to your phone recently.",
                               textAlign: TextAlign.center,
                               style: TextStyle(
                                   color: MyTheme.dark_grey, fontSize: 14))),
@@ -153,7 +153,7 @@ class _OtpState extends State<Otp> {
                                 autofocus: false,
                                 decoration:
                                     InputDecorations.buildInputDecoration_1(
-                                        hint_text: "A 1 B 2 C 3"),
+                                        hint_text: "A X B 4 J H"),
                               ),
                             ),
                           ],

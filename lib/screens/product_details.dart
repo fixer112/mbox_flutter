@@ -1,4 +1,5 @@
 import 'package:active_ecommerce_flutter/screens/cart.dart';
+import 'package:active_ecommerce_flutter/screens/common_webview_screen.dart';
 import 'package:active_ecommerce_flutter/screens/product_reviews.dart';
 import 'package:active_ecommerce_flutter/ui_elements/list_product_card.dart';
 import 'package:active_ecommerce_flutter/ui_elements/mini_product_card.dart';
@@ -78,7 +79,7 @@ class _ProductDetailsState extends State<ProductDetails> {
   fetchAll() {
     //print("product id : ${widget.id}");
     fetchProductDetails();
-    if (is_logged_in.value == true) {
+    if (is_logged_in.$ == true) {
       fetchWishListCheckInfo();
     }
 
@@ -180,7 +181,7 @@ class _ProductDetailsState extends State<ProductDetails> {
   }
 
   onWishTap() {
-    if (is_logged_in.value == false) {
+    if (is_logged_in.$ == false) {
       ToastComponent.showDialog("You need to log in", context,
           gravity: Toast.CENTER, duration: Toast.LENGTH_LONG);
       return;
@@ -208,8 +209,8 @@ class _ProductDetailsState extends State<ProductDetails> {
     var variantResponse = await ProductRepository().getVariantWiseInfo(
         id: widget.id, color: color_string, variants: _choiceString);
 
-    print("vr"+variantResponse.toJson().toString());
-    return;
+    /*print("vr"+variantResponse.toJson().toString());
+    return;*/
 
     _singlePrice = variantResponse.price;
     _stock = variantResponse.stock;
@@ -286,20 +287,20 @@ class _ProductDetailsState extends State<ProductDetails> {
   }
 
   addToCart({mode, context = null, snackbar = null}) async {
-    if (is_logged_in.value == false) {
+    if (is_logged_in.$ == false) {
       ToastComponent.showDialog("You are not logged in", context,
           gravity: Toast.CENTER, duration: Toast.LENGTH_LONG);
 
       return;
     }
 
-   /* print(widget.id);
+    print(widget.id);
     print(_variant);
-    print(user_id.value);
-    print(_quantity);*/
+    print(user_id.$);
+    print(_quantity);
 
     var cartAddResponse = await CartRepository()
-        .getCartAddResponse(widget.id, _variant, user_id.value, _quantity);
+        .getCartAddResponse(widget.id, _variant, user_id.$, _quantity);
 
     if (cartAddResponse.result == false) {
       ToastComponent.showDialog(cartAddResponse.message, context,
@@ -566,11 +567,8 @@ class _ProductDetailsState extends State<ProductDetails> {
                   ),
                   InkWell(
                     onTap: () {
-                      ToastComponent.showDialog(
-                          "Coming soon",
-                          context,
-                          gravity: Toast.CENTER,
-                          duration: Toast.LENGTH_LONG);
+                      ToastComponent.showDialog("Coming soon", context,
+                          gravity: Toast.CENTER, duration: Toast.LENGTH_LONG);
                     },
                     child: Container(
                       height: 40,
@@ -606,20 +604,13 @@ class _ProductDetailsState extends State<ProductDetails> {
                   ),
                   InkWell(
                     onTap: () {
-                      ToastComponent.showDialog(
-                          "Coming soon",
-                          context,
-                          gravity: Toast.CENTER,
-                          duration: Toast.LENGTH_LONG);
-
-                      return;
-
                       Navigator.push(context,
                           MaterialPageRoute(builder: (context) {
-                            return ProductReviews();
-                          }));
+                        return ProductReviews(id: widget.id);
+                      })).then((value) {
+                        onPopped(value);
+                      });
                     },
-
                     child: Container(
                       height: 40,
                       child: Padding(
@@ -649,7 +640,138 @@ class _ProductDetailsState extends State<ProductDetails> {
                       ),
                     ),
                   ),
-
+                  Divider(
+                    height: 1,
+                  ),
+                  InkWell(
+                    onTap: () {
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (context) {
+                        return CommonWebviewScreen(
+                          url:
+                              "${AppConfig.RAW_BASE_URL}/mobile-page/sellerpolicy",
+                          page_name: "Seller Policy",
+                        );
+                      }));
+                    },
+                    child: Container(
+                      height: 40,
+                      child: Padding(
+                        padding: const EdgeInsets.fromLTRB(
+                          16.0,
+                          0.0,
+                          8.0,
+                          0.0,
+                        ),
+                        child: Row(
+                          children: [
+                            Text(
+                              "Seller Policy",
+                              style: TextStyle(
+                                  color: MyTheme.font_grey,
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w600),
+                            ),
+                            Spacer(),
+                            Icon(
+                              Ionicons.ios_add,
+                              color: MyTheme.font_grey,
+                              size: 24,
+                            )
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                  Divider(
+                    height: 1,
+                  ),
+                  InkWell(
+                    onTap: () {
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (context) {
+                        return CommonWebviewScreen(
+                          url:
+                              "${AppConfig.RAW_BASE_URL}/mobile-page/returnpolicy",
+                          page_name: "Return Policy",
+                        );
+                      }));
+                    },
+                    child: Container(
+                      height: 40,
+                      child: Padding(
+                        padding: const EdgeInsets.fromLTRB(
+                          16.0,
+                          0.0,
+                          8.0,
+                          0.0,
+                        ),
+                        child: Row(
+                          children: [
+                            Text(
+                              "Return Policy",
+                              style: TextStyle(
+                                  color: MyTheme.font_grey,
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w600),
+                            ),
+                            Spacer(),
+                            Icon(
+                              Ionicons.ios_add,
+                              color: MyTheme.font_grey,
+                              size: 24,
+                            )
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                  Divider(
+                    height: 1,
+                  ),
+                  InkWell(
+                    onTap: () {
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (context) {
+                        return CommonWebviewScreen(
+                          url:
+                              "${AppConfig.RAW_BASE_URL}/mobile-page/supportpolicy",
+                          page_name: "Support Policy",
+                        );
+                      }));
+                    },
+                    child: Container(
+                      height: 40,
+                      child: Padding(
+                        padding: const EdgeInsets.fromLTRB(
+                          16.0,
+                          0.0,
+                          8.0,
+                          0.0,
+                        ),
+                        child: Row(
+                          children: [
+                            Text(
+                              "Support Policy",
+                              style: TextStyle(
+                                  color: MyTheme.font_grey,
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w600),
+                            ),
+                            Spacer(),
+                            Icon(
+                              Ionicons.ios_add,
+                              color: MyTheme.font_grey,
+                              size: 24,
+                            )
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                  Divider(
+                    height: 1,
+                  ),
                 ]),
               ),
               SliverList(
@@ -757,7 +879,33 @@ class _ProductDetailsState extends State<ProductDetails> {
           ),
         ),
         Spacer(),
-
+        Visibility(
+          visible: false,
+          child: Container(
+              child: Row(
+            children: [
+              InkWell(
+                onTap: () {
+                  ToastComponent.showDialog("Coming soon", context,
+                      gravity: Toast.CENTER, duration: Toast.LENGTH_LONG);
+                },
+                child: Padding(
+                  padding: const EdgeInsets.only(right: 4.0),
+                  child: Text(
+                    "Chat with seller",
+                    style: TextStyle(
+                        decoration: TextDecoration.underline,
+                        color: Color.fromRGBO(7, 101, 136, 1),
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600),
+                  ),
+                ),
+              ),
+              Icon(Icons.message,
+                  size: 16, color: Color.fromRGBO(7, 101, 136, 1))
+            ],
+          )),
+        )
       ],
     );
   }
@@ -1281,7 +1429,7 @@ class _ProductDetailsState extends State<ProductDetails> {
                 },
                 child: Icon(
                   FontAwesome.heart,
-                  color: Color.fromRGBO(84,28,86, 1),
+                  color: Color.fromRGBO(230, 46, 4, 1),
                   size: 20,
                 ),
               )
@@ -1291,7 +1439,7 @@ class _ProductDetailsState extends State<ProductDetails> {
                 },
                 child: Icon(
                   FontAwesome.heart_o,
-                  color: Color.fromRGBO(84,28,86, 1),
+                  color: Color.fromRGBO(230, 46, 4, 1),
                   size: 20,
                 ),
               )

@@ -3,24 +3,23 @@ import 'package:active_ecommerce_flutter/helpers/shared_value_helper.dart';
 class AuthHelper {
   setUserData(loginResponse) {
     if (loginResponse.result == true) {
-      is_logged_in.value = true;
-      access_token.value = loginResponse.access_token;
-      user_id.value = loginResponse.user.id;
-      user_name.value = loginResponse.user.name;
-      user_email.value = loginResponse.user.email;
-      user_phone.value = loginResponse.user.phone;
-      avatar_original.value = loginResponse.user.avatar_original;
-
+      is_logged_in.$ = true;
+      access_token.$ = loginResponse.access_token;
+      user_id.$ = loginResponse.user.id;
+      user_name.$ = loginResponse.user.name;
+      user_email.$ = loginResponse.user.email;
+      user_phone.$ = loginResponse.user.phone;
+      avatar_original.$ = loginResponse.user.avatar_original;
     }
   }
 
   clearUserData() {
-      is_logged_in.value = false;
-      access_token.value = "";
-      user_id.value = 0;
-      user_name.value = "";
-      user_email.value = "";
-      user_phone.value = "";
-      avatar_original.value = "";
+    is_logged_in.$ = false;
+    access_token.$ = "";
+    user_id.$ = 0;
+    user_name.$ = "";
+    user_email.$ = "";
+    user_phone.$ = "";
+    avatar_original.$ = "";
   }
 }

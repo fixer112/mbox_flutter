@@ -191,7 +191,8 @@ class _LoginState extends State<Login> {
                                   ignoreBlank: false,
                                   autoValidateMode: AutovalidateMode.disabled,
                                   selectorTextStyle:
-                                      TextStyle(color: MyTheme.font_grey),
+                                  TextStyle(color: MyTheme.font_grey),
+                                  textStyle: TextStyle(color: MyTheme.font_grey),
                                   initialValue: phoneCode,
                                   textFieldController: _phoneNumberController,
                                   formatInput: true,

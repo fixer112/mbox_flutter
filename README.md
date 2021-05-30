@@ -1,6 +1,6 @@
-# Mbox_Flutter
+# active_ecommerce_flutter
 
-This is the flutter mobile application for Mbox
+This is the flutter mobile application for active ecommerce cms
 
 ## Getting Started
 

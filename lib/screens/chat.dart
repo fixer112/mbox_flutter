@@ -9,7 +9,6 @@ import 'package:flutter_chat_bubble/chat_bubble.dart';
 import 'dart:async';
 import 'package:flutter_chat_bubble/clippers/chat_bubble_clipper_5.dart';
 
-
 class Chat extends StatefulWidget {
   Chat({
     Key key,
@@ -34,8 +33,7 @@ class _ChatState extends State<Chat> {
     return Scaffold(
         backgroundColor: Colors.white,
         appBar: buildAppBar(context),
-        body:    Stack(
-
+        body: Stack(
           children: [
             CustomScrollView(
               slivers: [
@@ -178,7 +176,7 @@ class _ChatState extends State<Chat> {
             controller: _chatTextController,
             decoration: InputDecoration(
                 filled: true,
-                fillColor: Color.fromRGBO(251,251, 251, 1),
+                fillColor: Color.fromRGBO(251, 251, 251, 1),
                 hintText: "Type your message here ...",
                 hintStyle:
                     TextStyle(fontSize: 14.0, color: MyTheme.textfield_grey),
@@ -212,7 +210,7 @@ class _ChatState extends State<Chat> {
                 final DateFormat time_formatter = DateFormat('hh:ss');
                 final String formatted_date = date_formatter.format(now);
                 final String formatted_time = time_formatter.format(now);
-               /* print(chatText);
+                /* print(chatText);
                 print(formatted_date);
                 print(formatted_time);
                 print("--------------------");*/
@@ -223,21 +221,16 @@ class _ChatState extends State<Chat> {
                     is_sender: true);
                 setState(() {
                   chatList.add(a_chat_item);
-
                 });
 
                 //print(_chatScrollController.positions.elementAt(0).viewportDimension);
 
-
-                  /*_chatScrollController.animateTo(
+                /*_chatScrollController.animateTo(
                       500,
                       duration: Duration(milliseconds: 500),
                       curve: Curves.fastOutSlowIn);*/
 
                 _chatScrollController.jumpTo(200);
-
-
-
               }
             },
             child: Container(
@@ -290,9 +283,8 @@ class _ChatState extends State<Chat> {
                       color: MyTheme.font_grey, fontSize: 13, wordSpacing: 1),
                 ),
               ),
-              Text(date+" "+time,
+              Text(date + " " + time,
                   style: TextStyle(color: MyTheme.medium_grey, fontSize: 10)),
-
             ],
           ),
         ),
@@ -322,9 +314,8 @@ class _ChatState extends State<Chat> {
                       color: MyTheme.font_grey, fontSize: 13, wordSpacing: 1),
                 ),
               ),
-              Text(date+" "+time,
+              Text(date + " " + time,
                   style: TextStyle(color: MyTheme.medium_grey, fontSize: 10)),
-
             ],
           ),
         ),

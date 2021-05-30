@@ -106,7 +106,7 @@ class DetailedProduct {
     currency_symbol: json["currency_symbol"],
     current_stock: json["current_stock"],
     unit: json["unit"],
-    rating: json["rating"],
+    rating: json["rating"].toInt(),
     rating_count: json["rating_count"],
     earn_point: json["earn_point"],
     description: json["description"],

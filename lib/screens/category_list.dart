@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:active_ecommerce_flutter/my_theme.dart';
-import 'package:active_ecommerce_flutter/ui_sections/main_drawer.dart';
+import 'package:active_ecommerce_flutter/ui_sections/drawer.dart';
 import 'package:active_ecommerce_flutter/custom/toast_component.dart';
 import 'package:toast/toast.dart';
 import 'package:active_ecommerce_flutter/screens/category_products.dart';
@@ -355,7 +355,6 @@ class _CategoryListState extends State<CategoryList> {
                       return CategoryProducts(
                         category_id: widget.parent_category_id,
                         category_name: widget.parent_category_name,
-
                       );
                     }));
                   },

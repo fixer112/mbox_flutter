@@ -27,7 +27,7 @@ class _FlashDealProductsState extends State<FlashDealProducts> {
   @override
   void initState() {
     // TODO: implement initState
-    _future =  ProductRepository().getFlashDealProducts(id: 7);
+    _future =  ProductRepository().getFlashDealProducts(id: widget.flash_deal_id);
     _searchList = [];
     _fullList = [];
     super.initState();

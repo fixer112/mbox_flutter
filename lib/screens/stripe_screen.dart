@@ -7,18 +7,19 @@ import 'package:active_ecommerce_flutter/my_theme.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:active_ecommerce_flutter/app_config.dart';
 import 'package:active_ecommerce_flutter/screens/order_list.dart';
+import 'package:active_ecommerce_flutter/screens/wallet.dart';
 import 'package:active_ecommerce_flutter/helpers/shared_value_helper.dart';
 
 class StripeScreen extends StatefulWidget {
   int owner_id;
-  double grand_total_value;
+  double amount;
   String payment_type;
   String payment_method_key;
 
   StripeScreen(
       {Key key,
       this.owner_id = 0,
-      this.grand_total_value = 0.00,
+      this.amount = 0.00,
       this.payment_type = "",
       this.payment_method_key = ""})
       : super(key: key);
@@ -33,7 +34,6 @@ class _StripeScreenState extends State<StripeScreen> {
 
   WebViewController _webViewController;
 
-
   @override
   void initState() {
     // TODO: implement initState
@@ -46,7 +46,7 @@ class _StripeScreenState extends State<StripeScreen> {
 
   createOrder() async {
     var orderCreateResponse = await PaymentRepository()
-        .getOrderCreateResponse(widget.owner_id,widget.payment_method_key);
+        .getOrderCreateResponse(widget.owner_id, widget.payment_method_key);
 
     if (orderCreateResponse.result == false) {
       ToastComponent.showDialog(orderCreateResponse.message, context,
@@ -83,16 +83,22 @@ class _StripeScreenState extends State<StripeScreen> {
       } else if (responseJSON["result"] == true) {
         Toast.show(responseJSON["message"], context,
             duration: Toast.LENGTH_LONG, gravity: Toast.CENTER);
-
-        Navigator.push(context, MaterialPageRoute(builder: (context) {
-          return OrderList(from_checkout: true);
-        }));
+        if (widget.payment_type == "cart_payment") {
+          Navigator.push(context, MaterialPageRoute(builder: (context) {
+            return OrderList(from_checkout: true);
+          }));
+        } else if (widget.payment_type == "wallet_payment") {
+          Navigator.push(context, MaterialPageRoute(builder: (context) {
+            return Wallet(from_recharge: true);
+          }));
+        }
       }
     });
   }
 
   buildBody() {
-    String initial_url = "${AppConfig.BASE_URL}/stripe?payment_type=${widget.payment_type}&order_id=${_order_id}&amount=${widget.grand_total_value}&user_id=${user_id.value}";
+    String initial_url =
+        "${AppConfig.BASE_URL}/stripe?payment_type=${widget.payment_type}&order_id=${_order_id}&amount=${widget.amount}&user_id=${user_id.$}";
 
     //print("init url");
     //print(initial_url);

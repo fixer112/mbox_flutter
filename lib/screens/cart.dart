@@ -1,7 +1,7 @@
 import 'package:active_ecommerce_flutter/screens/shipping_info.dart';
 import 'package:flutter/material.dart';
 import 'package:active_ecommerce_flutter/my_theme.dart';
-import 'package:active_ecommerce_flutter/ui_sections/main_drawer.dart';
+import 'package:active_ecommerce_flutter/ui_sections/drawer.dart';
 import 'package:flutter/widgets.dart';
 import 'package:active_ecommerce_flutter/repositories/cart_repository.dart';
 import 'package:active_ecommerce_flutter/helpers/shared_value_helper.dart';
@@ -33,12 +33,12 @@ class _CartState extends State<Cart> {
     super.initState();
 
     /*print("user data");
-    print(is_logged_in.value);
-    print(access_token.value);
-    print(user_id.value);
-    print(user_name.value);*/
+    print(is_logged_in.$);
+    print(access_token.$);
+    print(user_id.$);
+    print(user_name.$);*/
 
-    if (is_logged_in.value == true) {
+    if (is_logged_in.$ == true) {
       fetchData();
     }
   }
@@ -51,7 +51,7 @@ class _CartState extends State<Cart> {
 
   fetchData() async {
     var cartResponseList =
-        await CartRepository().getCartResponseList(user_id.value);
+        await CartRepository().getCartResponseList(user_id.$);
 
     if (cartResponseList != null && cartResponseList.length > 0) {
       _shopList = cartResponseList;
@@ -238,11 +238,11 @@ class _CartState extends State<Cart> {
   }
 
   reset() {
-    var _chosenOwnerId = 0;
-    var _shopList = [];
-    bool _isInitial = true;
-    var _cartTotal = 0.00;
-    var _cartTotalString = ". . .";
+    _chosenOwnerId = 0;
+    _shopList = [];
+    _isInitial = true;
+    _cartTotal = 0.00;
+    _cartTotalString = ". . .";
 
     setState(() {});
   }
@@ -470,7 +470,7 @@ class _CartState extends State<Cart> {
   }
 
   buildCartSellerList() {
-    if (is_logged_in.value == false) {
+    if (is_logged_in.$ == false) {
       return Container(
           height: 100,
           child: Center(

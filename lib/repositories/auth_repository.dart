@@ -21,13 +21,14 @@ class AuthRepository {
         Uri.parse("${AppConfig.BASE_URL}/auth/login"),
         headers: {"Content-Type": "application/json"},
         body: post_body);
+    print(response.body);
     return loginResponseFromJson(response.body);
   }
 
   Future<LogoutResponse> getLogoutResponse() async {
     final response = await http.get(
       Uri.parse("${AppConfig.BASE_URL}/auth/logout"),
-      headers: {"Authorization": "Bearer ${access_token.value}"},
+      headers: {"Authorization": "Bearer ${access_token.$}"},
     );
 
     print(response.body);
@@ -125,7 +126,7 @@ class AuthRepository {
   }
 
   Future<UserByTokenResponse> getUserByTokenResponse() async {
-    var post_body = jsonEncode({"access_token": "${access_token.value}"});
+    var post_body = jsonEncode({"access_token": "${access_token.$}"});
 
     final response = await http.post(
         Uri.parse("${AppConfig.BASE_URL}/get-user-by-access_token"),

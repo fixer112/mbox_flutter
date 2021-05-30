@@ -4,15 +4,13 @@ import 'package:flutter/foundation.dart';
 import 'package:active_ecommerce_flutter/data_model/order_mini_response.dart';
 import 'package:active_ecommerce_flutter/data_model/order_detail_response.dart';
 import 'package:active_ecommerce_flutter/data_model/order_item_response.dart';
+import 'package:active_ecommerce_flutter/helpers/shared_value_helper.dart';
 
 class OrderRepository {
   Future<OrderMiniResponse> getOrderList(
-      {@required int user_id = 0,
-      page = 1,
-      payment_status = "",
-      delivery_status = ""}) async {
+      {page = 1, payment_status = "", delivery_status = ""}) async {
     var url = "${AppConfig.BASE_URL}/purchase-history/" +
-        user_id.toString() +
+        "${user_id.$}" +
         "?page=${page}&payment_status=${payment_status}&delivery_status=${delivery_status}";
 
     final response = await http.get(Uri.parse(url));

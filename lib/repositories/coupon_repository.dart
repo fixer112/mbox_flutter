@@ -11,17 +11,17 @@ class CouponRepository {
   Future<CouponApplyResponse> getCouponApplyResponse(
       @required int owner_id, @required String coupon_code) async {
     var post_body = jsonEncode({
-      "user_id": "${user_id.value}",
+      "user_id": "${user_id.$}",
       "owner_id": "$owner_id",
       "coupon_code": "$coupon_code"
     });
-    final response =
-        await http.post(Uri.parse("${AppConfig.BASE_URL}/coupon-apply"),
-            headers: {
-              "Content-Type": "application/json",
-              "Authorization": "Bearer ${access_token.value}"
-            },
-            body: post_body);
+    final response = await http.post(
+        Uri.parse("${AppConfig.BASE_URL}/coupon-apply"),
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer ${access_token.$}"
+        },
+        body: post_body);
 
     return couponApplyResponseFromJson(response.body);
   }
@@ -29,14 +29,14 @@ class CouponRepository {
   Future<CouponRemoveResponse> getCouponRemoveResponse(
       @required int owner_id) async {
     var post_body =
-        jsonEncode({"user_id": "${user_id.value}", "owner_id": "$owner_id"});
-    final response =
-        await http.post(Uri.parse("${AppConfig.BASE_URL}/coupon-remove"),
-            headers: {
-              "Content-Type": "application/json",
-              "Authorization": "Bearer ${access_token.value}"
-            },
-            body: post_body);
+        jsonEncode({"user_id": "${user_id.$}", "owner_id": "$owner_id"});
+    final response = await http.post(
+        Uri.parse("${AppConfig.BASE_URL}/coupon-remove"),
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer ${access_token.$}"
+        },
+        body: post_body);
 
     return couponRemoveResponseFromJson(response.body);
   }

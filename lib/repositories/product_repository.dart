@@ -6,7 +6,7 @@ import 'package:active_ecommerce_flutter/data_model/variant_response.dart';
 import 'package:flutter/foundation.dart';
 
 class ProductRepository {
-  Future<ProductMiniResponse> getFeturedProducts() async {
+  Future<ProductMiniResponse> getFeaturedProducts() async {
     final response =
         await http.get(Uri.parse("${AppConfig.BASE_URL}/products/featured"));
     return productMiniResponseFromJson(response.body);

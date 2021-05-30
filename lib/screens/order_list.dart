@@ -59,8 +59,6 @@ class _OrderListState extends State<OrderList> {
   List<DropdownMenuItem<PaymentStatus>> _dropdownPaymentStatusItems;
   List<DropdownMenuItem<DeliveryStatus>> _dropdownDeliveryStatusItems;
 
-  int _user_id;
-
   //------------------------------------
   List<dynamic> _orderList = [];
   bool _isInitial = true;
@@ -72,8 +70,6 @@ class _OrderListState extends State<OrderList> {
 
   @override
   void initState() {
-    _user_id = 8;
-
     init();
     super.initState();
 
@@ -126,14 +122,13 @@ class _OrderListState extends State<OrderList> {
 
   reset() {
     _orderList.clear();
-     _isInitial = true;
-     _page = 1;
-     _totalData = 0;
-     _showLoadingContainer = false;
-
+    _isInitial = true;
+    _page = 1;
+    _totalData = 0;
+    _showLoadingContainer = false;
   }
 
-  resetFilterKeys(){
+  resetFilterKeys() {
     _defaultPaymentStatusKey = '';
     _defaultDeliveryStatusKey = '';
 
@@ -156,16 +151,12 @@ class _OrderListState extends State<OrderList> {
         _selectedDeliveryStatus = _dropdownDeliveryStatusItems[x].value;
       }
     }
-    setState(() {
-
-    });
+    setState(() {});
     fetchData();
   }
 
   fetchData() async {
-
     var orderResponse = await OrderRepository().getOrderList(
-        user_id: _user_id,
         page: _page,
         payment_status: _selectedPaymentStatus.option_key,
         delivery_status: _selectedDeliveryStatus.option_key);
@@ -263,7 +254,7 @@ class _OrderListState extends State<OrderList> {
                 child: Icon(Icons.expand_more, color: Colors.black54),
               ),
               hint: Text(
-                "All Payments",
+                "All",
                 style: TextStyle(
                   color: Colors.black,
                   fontSize: 13,
@@ -315,7 +306,7 @@ class _OrderListState extends State<OrderList> {
                 child: Icon(Icons.expand_more, color: Colors.black54),
               ),
               hint: Text(
-                "All Deliveries",
+                "All",
                 style: TextStyle(
                   color: Colors.black,
                   fontSize: 13,
@@ -358,10 +349,8 @@ class _OrderListState extends State<OrderList> {
                 Padding(
                   padding: MediaQuery.of(context).viewPadding.top >
                           30 //MediaQuery.of(context).viewPadding.top is the statusbar height, with a notch phone it results almost 50, without a notch it shows 24.0.For safety we have checked if its greater than thirty
-                      ? const EdgeInsets.only(
-                          top: 36.0)
-                      : const EdgeInsets.only(
-                          top: 14.0),
+                      ? const EdgeInsets.only(top: 36.0)
+                      : const EdgeInsets.only(top: 14.0),
                   child: buildTopAppBarContainer(),
                 ),
                 buildBottomAppBar(context)
@@ -446,7 +435,9 @@ class _OrderListState extends State<OrderList> {
                     onTap: () {
                       Navigator.push(context,
                           MaterialPageRoute(builder: (context) {
-                        return OrderDetails(id:_orderList[index].id,);
+                        return OrderDetails(
+                          id: _orderList[index].id,
+                        );
                       }));
                     },
                     child: buildOrderListItemCard(index),

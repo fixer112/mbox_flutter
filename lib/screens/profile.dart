@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:active_ecommerce_flutter/my_theme.dart';
-import 'package:active_ecommerce_flutter/ui_sections/main_drawer.dart';
+import 'package:active_ecommerce_flutter/ui_sections/drawer.dart';
 import 'package:active_ecommerce_flutter/helpers/shared_value_helper.dart';
 import 'package:active_ecommerce_flutter/app_config.dart';
 import 'package:active_ecommerce_flutter/screens/wallet.dart';
+import 'package:active_ecommerce_flutter/screens/profile_edit.dart';
+import 'package:active_ecommerce_flutter/screens/address.dart';
 import 'package:active_ecommerce_flutter/screens/order_list.dart';
 import 'package:active_ecommerce_flutter/repositories/profile_repositories.dart';
 import 'package:active_ecommerce_flutter/custom/toast_component.dart';
@@ -34,7 +36,7 @@ class _ProfileState extends State<Profile> {
     // TODO: implement initState
     super.initState();
 
-    if (is_logged_in.value == true) {
+    if (is_logged_in.$ == true) {
       fetchAll();
     }
   }
@@ -45,6 +47,11 @@ class _ProfileState extends State<Profile> {
   }
 
   Future<void> _onPageRefresh() async {
+    reset();
+    fetchAll();
+  }
+
+  onPopped(value) async {
     reset();
     fetchAll();
   }
@@ -121,12 +128,12 @@ class _ProfileState extends State<Profile> {
   }
 
   buildBody(context) {
-    if (is_logged_in.value == false) {
+    if (is_logged_in.$ == false) {
       return Container(
           height: 100,
           child: Center(
               child: Text(
-            "Please login to view profile",
+            "Please log in to see the profile",
             style: TextStyle(color: MyTheme.font_grey),
           )));
     } else {
@@ -206,8 +213,11 @@ class _ProfileState extends State<Profile> {
         ),
         InkWell(
           onTap: () {
-            ToastComponent.showDialog("Coming soon", context,
-                gravity: Toast.CENTER, duration: Toast.LENGTH_LONG);
+            Navigator.push(context, MaterialPageRoute(builder: (context) {
+              return ProfileEdit();
+            })).then((value) {
+              onPopped(value);
+            });
           },
           child: Column(
             children: [
@@ -239,8 +249,9 @@ class _ProfileState extends State<Profile> {
         ),
         InkWell(
           onTap: () {
-            ToastComponent.showDialog("Coming soon", context,
-                gravity: Toast.CENTER, duration: Toast.LENGTH_LONG);
+            Navigator.push(context, MaterialPageRoute(builder: (context) {
+              return Address();
+            }));
           },
           child: Column(
             children: [
@@ -270,7 +281,7 @@ class _ProfileState extends State<Profile> {
             ],
           ),
         ),
-        InkWell(
+        /*InkWell(
           onTap: () {
             ToastComponent.showDialog("Coming soon", context,
                 gravity: Toast.CENTER, duration: Toast.LENGTH_LONG);
@@ -300,7 +311,7 @@ class _ProfileState extends State<Profile> {
               )
             ],
           ),
-        ),
+        ),*/
       ],
     );
   }
@@ -316,33 +327,37 @@ class _ProfileState extends State<Profile> {
               ToastComponent.showDialog("Coming soon", context,
                   gravity: Toast.CENTER, duration: Toast.LENGTH_LONG);
             },
-            child: Padding(
-              padding: const EdgeInsets.only(bottom: 16.0),
-              child: Row(
-                children: [
-                  Container(
-                      height: 40,
-                      width: 40,
-                      decoration: BoxDecoration(
-                        color: Colors.amber,
-                        shape: BoxShape.circle,
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Icon(
-                          Icons.notifications_outlined,
-                          color: Colors.white,
+            child: Visibility(
+              visible: false,
+              child: Padding(
+                padding: const EdgeInsets.only(bottom: 16.0),
+                child: Row(
+                  children: [
+                    Container(
+                        height: 40,
+                        width: 40,
+                        decoration: BoxDecoration(
+                          color: Colors.amber,
+                          shape: BoxShape.circle,
                         ),
-                      )),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 16.0),
-                    child: Text(
-                      "Notification",
-                      textAlign: TextAlign.center,
-                      style: TextStyle(color: MyTheme.font_grey, fontSize: 14),
-                    ),
-                  )
-                ],
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Icon(
+                            Icons.notifications_outlined,
+                            color: Colors.white,
+                          ),
+                        )),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 16.0),
+                      child: Text(
+                        "Notification",
+                        textAlign: TextAlign.center,
+                        style:
+                            TextStyle(color: MyTheme.font_grey, fontSize: 14),
+                      ),
+                    )
+                  ],
+                ),
               ),
             ),
           ),
@@ -480,7 +495,7 @@ class _ProfileState extends State<Profile> {
                 borderRadius: BorderRadius.all(Radius.circular(100.0)),
                 child: FadeInImage.assetNetwork(
                   placeholder: 'assets/placeholder.png',
-                  image: AppConfig.BASE_PATH + "${avatar_original.value}",
+                  image: AppConfig.BASE_PATH + "${avatar_original.$}",
                   fit: BoxFit.fill,
                 )),
           ),
@@ -488,7 +503,7 @@ class _ProfileState extends State<Profile> {
         Padding(
           padding: const EdgeInsets.only(top: 8.0),
           child: Text(
-            "${user_name.value}",
+            "${user_name.$}",
             style: TextStyle(
                 fontSize: 14,
                 color: MyTheme.font_grey,
@@ -497,15 +512,15 @@ class _ProfileState extends State<Profile> {
         ),
         Padding(
             padding: const EdgeInsets.only(top: 4.0),
-            child: user_email.value != "" && user_email.value != null
+            child: user_email.$ != "" && user_email.$ != null
                 ? Text(
-                    "${user_email.value}",
+                    "${user_email.$}",
                     style: TextStyle(
                       color: MyTheme.medium_grey,
                     ),
                   )
                 : Text(
-                    "${user_phone.value}",
+                    "${user_phone.$}",
                     style: TextStyle(
                       color: MyTheme.medium_grey,
                     ),
@@ -547,9 +562,6 @@ class _ProfileState extends State<Profile> {
     return AppBar(
       centerTitle: true,
       leading: GestureDetector(
-        onTap: () {
-          _scaffoldKey.currentState.openDrawer();
-        },
         child: widget.show_back_button
             ? Builder(
                 builder: (context) => IconButton(
@@ -558,14 +570,19 @@ class _ProfileState extends State<Profile> {
                 ),
               )
             : Builder(
-                builder: (context) => Padding(
-                  padding: const EdgeInsets.symmetric(
-                      vertical: 18.0, horizontal: 0.0),
-                  child: Container(
-                    child: Image.asset(
-                      'assets/hamburger.png',
-                      height: 16,
-                      color: MyTheme.dark_grey,
+                builder: (context) => GestureDetector(
+                  onTap: () {
+                    _scaffoldKey.currentState.openDrawer();
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 18.0, horizontal: 0.0),
+                    child: Container(
+                      child: Image.asset(
+                        'assets/hamburger.png',
+                        height: 16,
+                        color: MyTheme.dark_grey,
+                      ),
                     ),
                   ),
                 ),
