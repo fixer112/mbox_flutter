@@ -22,6 +22,8 @@ import 'package:active_ecommerce_flutter/helpers/color_helper.dart';
 import 'package:active_ecommerce_flutter/helpers/shared_value_helper.dart';
 
 import 'package:active_ecommerce_flutter/custom/toast_component.dart';
+import 'package:active_ecommerce_flutter/repositories/chat_repository.dart';
+import 'package:active_ecommerce_flutter/screens/chat.dart';
 import 'package:toast/toast.dart';
 
 class ProductDetails extends StatefulWidget {
@@ -40,6 +42,8 @@ class _ProductDetailsState extends State<ProductDetails> {
   ScrollController _mainScrollController = ScrollController();
   ScrollController _colorScrollController = ScrollController();
   ScrollController _variantScrollController = ScrollController();
+  TextEditingController sellerChatTitleController = TextEditingController();
+  TextEditingController sellerChatMessageController = TextEditingController();
 
   //init values
   bool _isInWishList = false;
@@ -79,7 +83,7 @@ class _ProductDetailsState extends State<ProductDetails> {
   fetchAll() {
     //print("product id : ${widget.id}");
     fetchProductDetails();
-    if (is_logged_in.$ == true) {
+    if (is_logged_in.value == true) {
       fetchWishListCheckInfo();
     }
 
@@ -93,6 +97,8 @@ class _ProductDetailsState extends State<ProductDetails> {
 
     if (productDetailsResponse.detailed_products.length > 0) {
       _productDetails = productDetailsResponse.detailed_products[0];
+      sellerChatTitleController.text =
+          productDetailsResponse.detailed_products[0].name;
     }
 
     setProductDetailValues();
@@ -181,7 +187,7 @@ class _ProductDetailsState extends State<ProductDetails> {
   }
 
   onWishTap() {
-    if (is_logged_in.$ == false) {
+    if (is_logged_in.value == false) {
       ToastComponent.showDialog("You need to log in", context,
           gravity: Toast.CENTER, duration: Toast.LENGTH_LONG);
       return;
@@ -245,6 +251,7 @@ class _ProductDetailsState extends State<ProductDetails> {
     _quantity = 1;
     _productDetailsFetched = false;
     _isInWishList = false;
+    sellerChatTitleController.clear();
     setState(() {});
   }
 
@@ -287,7 +294,7 @@ class _ProductDetailsState extends State<ProductDetails> {
   }
 
   addToCart({mode, context = null, snackbar = null}) async {
-    if (is_logged_in.$ == false) {
+    if (is_logged_in.value == false) {
       ToastComponent.showDialog("You are not logged in", context,
           gravity: Toast.CENTER, duration: Toast.LENGTH_LONG);
 
@@ -296,11 +303,11 @@ class _ProductDetailsState extends State<ProductDetails> {
 
     print(widget.id);
     print(_variant);
-    print(user_id.$);
+    print(user_id.value);
     print(_quantity);
 
     var cartAddResponse = await CartRepository()
-        .getCartAddResponse(widget.id, _variant, user_id.$, _quantity);
+        .getCartAddResponse(widget.id, _variant, user_id.value, _quantity);
 
     if (cartAddResponse.result == false) {
       ToastComponent.showDialog(cartAddResponse.message, context,
@@ -326,6 +333,200 @@ class _ProductDetailsState extends State<ProductDetails> {
   onPopped(value) async {
     reset();
     fetchAll();
+  }
+
+  onTapSellerChat() {
+    return showDialog(
+        context: context,
+        builder: (_) => AlertDialog(
+              insetPadding: EdgeInsets.symmetric(horizontal: 10),
+              contentPadding: EdgeInsets.only(
+                  top: 36.0, left: 36.0, right: 36.0, bottom: 2.0),
+              content: Container(
+                width: 400,
+                child: SingleChildScrollView(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 8.0),
+                        child: Text("Title",
+                            style: TextStyle(
+                                color: MyTheme.font_grey, fontSize: 12)),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 16.0),
+                        child: Container(
+                          height: 40,
+                          child: TextField(
+                            controller: sellerChatTitleController,
+                            autofocus: false,
+                            decoration: InputDecoration(
+                                hintText: "Enter Title",
+                                hintStyle: TextStyle(
+                                    fontSize: 12.0,
+                                    color: MyTheme.textfield_grey),
+                                enabledBorder: OutlineInputBorder(
+                                  borderSide: BorderSide(
+                                      color: MyTheme.textfield_grey,
+                                      width: 0.5),
+                                  borderRadius: const BorderRadius.all(
+                                    const Radius.circular(8.0),
+                                  ),
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderSide: BorderSide(
+                                      color: MyTheme.textfield_grey,
+                                      width: 1.0),
+                                  borderRadius: const BorderRadius.all(
+                                    const Radius.circular(8.0),
+                                  ),
+                                ),
+                                contentPadding: EdgeInsets.only(left: 8.0)),
+                          ),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 8.0),
+                        child: Text("Message *",
+                            style: TextStyle(
+                                color: MyTheme.font_grey, fontSize: 12)),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 16.0),
+                        child: Container(
+                          height: 55,
+                          child: TextField(
+                            controller: sellerChatMessageController,
+                            autofocus: false,
+                            maxLines: null,
+                            keyboardType: TextInputType.multiline,
+                            decoration: InputDecoration(
+                                hintText: "Enter Message",
+                                hintStyle: TextStyle(
+                                    fontSize: 12.0,
+                                    color: MyTheme.textfield_grey),
+                                enabledBorder: OutlineInputBorder(
+                                  borderSide: BorderSide(
+                                      color: MyTheme.textfield_grey,
+                                      width: 0.5),
+                                  borderRadius: const BorderRadius.all(
+                                    const Radius.circular(8.0),
+                                  ),
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderSide: BorderSide(
+                                      color: MyTheme.textfield_grey,
+                                      width: 1.0),
+                                  borderRadius: const BorderRadius.all(
+                                    const Radius.circular(8.0),
+                                  ),
+                                ),
+                                contentPadding: EdgeInsets.only(
+                                    left: 8.0, top: 16.0, bottom: 16.0)),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              actions: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(right: 8.0),
+                      child: FlatButton(
+                        minWidth: 75,
+                        height: 30,
+                        color: Color.fromRGBO(253, 253, 253, 1),
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8.0),
+                            side: BorderSide(
+                                color: MyTheme.light_grey, width: 1.0)),
+                        child: Text(
+                          "CLOSE",
+                          style: TextStyle(
+                            color: MyTheme.font_grey,
+                          ),
+                        ),
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                      ),
+                    ),
+                    SizedBox(
+                      width: 1,
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(right: 28.0),
+                      child: FlatButton(
+                        minWidth: 75,
+                        height: 30,
+                        color: MyTheme.accent_color,
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8.0),
+                            side: BorderSide(
+                                color: MyTheme.light_grey, width: 1.0)),
+                        child: Text(
+                          "SEND",
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600),
+                        ),
+                        onPressed: () {
+                          onPressSendMessage();
+                        },
+                      ),
+                    )
+                  ],
+                )
+              ],
+            ));
+  }
+
+  onPressSendMessage() async {
+    var title = sellerChatTitleController.text.toString();
+    var message = sellerChatMessageController.text.toString();
+
+    if (title == "" || message == "") {
+      ToastComponent.showDialog("Title or message cannot be empty", context,
+          gravity: Toast.CENTER, duration: Toast.LENGTH_LONG);
+      return;
+    }
+
+    var conversationCreateResponse = await ChatRepository()
+        .getCreateConversationResponse(
+            product_id: widget.id, title: title, message: message);
+
+    if(conversationCreateResponse.result == false){
+      ToastComponent.showDialog("Could not create conversation", context,
+          gravity: Toast.CENTER, duration: Toast.LENGTH_LONG);
+      return;
+    }
+
+    Navigator.pop(context);
+    sellerChatTitleController.clear();
+    sellerChatMessageController.clear();
+    setState(() {
+
+    });
+
+    Navigator.push(context, MaterialPageRoute(builder: (context) {
+      return Chat(
+        conversation_id: conversationCreateResponse.conversation_id,
+        messenger_name: conversationCreateResponse.shop_name,
+        messenger_title: conversationCreateResponse.title,
+        messenger_image: conversationCreateResponse.shop_logo,
+      );;
+    })).then((value) {
+      onPopped(value);
+    });
+
+
   }
 
   @override
@@ -879,33 +1080,34 @@ class _ProductDetailsState extends State<ProductDetails> {
           ),
         ),
         Spacer(),
-        Visibility(
-          visible: false,
-          child: Container(
-              child: Row(
-            children: [
-              InkWell(
-                onTap: () {
-                  ToastComponent.showDialog("Coming soon", context,
+        Container(
+            child: Row(
+          children: [
+            InkWell(
+              onTap: () {
+                if (is_logged_in.value == false) {
+                  ToastComponent.showDialog("You need to log in", context,
                       gravity: Toast.CENTER, duration: Toast.LENGTH_LONG);
-                },
-                child: Padding(
-                  padding: const EdgeInsets.only(right: 4.0),
-                  child: Text(
-                    "Chat with seller",
-                    style: TextStyle(
-                        decoration: TextDecoration.underline,
-                        color: Color.fromRGBO(7, 101, 136, 1),
-                        fontSize: 12,
-                        fontWeight: FontWeight.w600),
-                  ),
+                  return;
+                }
+
+                onTapSellerChat();
+              },
+              child: Padding(
+                padding: const EdgeInsets.only(right: 4.0),
+                child: Text(
+                  "Chat with seller",
+                  style: TextStyle(
+                      decoration: TextDecoration.underline,
+                      color: Color.fromRGBO(7, 101, 136, 1),
+                      fontSize: 12,
+                      fontWeight: FontWeight.w600),
                 ),
               ),
-              Icon(Icons.message,
-                  size: 16, color: Color.fromRGBO(7, 101, 136, 1))
-            ],
-          )),
-        )
+            ),
+            Icon(Icons.message, size: 16, color: Color.fromRGBO(7, 101, 136, 1))
+          ],
+        ))
       ],
     );
   }

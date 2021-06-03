@@ -87,7 +87,7 @@ class _ProductReviewsState extends State<ProductReviews> {
   }
 
   onTapReviewSubmit(context) async {
-    if (is_logged_in.$ == false) {
+    if (is_logged_in.value == false) {
       ToastComponent.showDialog("You need to login to give a review", context,
           gravity: Toast.CENTER, duration: Toast.LENGTH_LONG);
       return;
@@ -161,10 +161,7 @@ class _ProductReviewsState extends State<ProductReviews> {
               ),
             ), //original
 
-            Align(
-              alignment: Alignment.bottomCenter,
-              child: buildBottomBar(context),
-            ),
+            Align(alignment: Alignment.bottomCenter,child: buildBottomBar(context),),
             Align(
                 alignment: Alignment.bottomCenter,
                 child: buildLoadingContainer()),

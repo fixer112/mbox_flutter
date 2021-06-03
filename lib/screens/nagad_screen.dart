@@ -85,8 +85,8 @@ class _NagadScreenState extends State<NagadScreen> {
 
     setState(() {});
 
-    print(_initial_url);
-    print(_initial_url_fetched);
+    //print(_initial_url);
+    //print(_initial_url_fetched);
   }
 
   @override
@@ -105,7 +105,7 @@ class _NagadScreenState extends State<NagadScreen> {
         .then((data) {
       var decodedJSON = jsonDecode(data);
       Map<String, dynamic> responseJSON = jsonDecode(decodedJSON);
-      //print(data.toString());
+      print(data.toString());
       if (responseJSON["result"] == false) {
         Toast.show(responseJSON["message"], context,
             duration: Toast.LENGTH_LONG, gravity: Toast.CENTER);
@@ -179,10 +179,11 @@ class _NagadScreenState extends State<NagadScreen> {
                   page.contains('/check-out/confirm-payment/')) {
                 getData();
               } else {
-                ToastComponent.showDialog("Payment cancelled", context,
-                    gravity: Toast.CENTER, duration: Toast.LENGTH_LONG);
-                Navigator.of(context).pop();
-                return;
+                if (page.contains('confirm-payment')) {
+                  print('yessssssss');
+                } else {
+                  print('nooooooooo');
+                }
               }
             },
           ),

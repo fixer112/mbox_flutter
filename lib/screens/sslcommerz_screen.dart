@@ -98,7 +98,7 @@ class _SslCommerzScreenState extends State<SslCommerzScreen> {
 
   buildBody() {
     String initial_url =
-        "${AppConfig.BASE_URL}/sslcommerz/begin?payment_type=${widget.payment_type}&order_id=${_order_id}&amount=${widget.amount}&user_id=${user_id.$}";
+        "${AppConfig.BASE_URL}/sslcommerz/begin?payment_type=${widget.payment_type}&order_id=${_order_id}&amount=${widget.amount}&user_id=${user_id.value}";
 
     //print("init url");
     //print(initial_url);
@@ -129,10 +129,8 @@ class _SslCommerzScreenState extends State<SslCommerzScreen> {
 
               if (page.contains("/sslCommerz/success")) {
                 getData();
-              } else if (page.contains("/sslCommerz/cancel") ||
-                  page.contains("/sslCommerz/fail")) {
-                ToastComponent.showDialog(
-                    "Payment cancelled or failed", context,
+              } else if (page.contains("/sslCommerz/cancel") || page.contains("/sslCommerz/fail")) {
+                ToastComponent.showDialog("Payment cancelled or failed", context,
                     gravity: Toast.CENTER, duration: Toast.LENGTH_LONG);
                 Navigator.of(context).pop();
                 return;

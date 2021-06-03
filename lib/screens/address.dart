@@ -71,12 +71,12 @@ class _AddressState extends State<Address> {
     super.initState();
 
     /*print("user data");
-    print(is_logged_in.$);
-    print(access_token.$);
-    print(user_id.$);
-    print(user_name.$);*/
+    print(is_logged_in.value);
+    print(access_token.value);
+    print(user_id.value);
+    print(user_name.value);*/
 
-    if (is_logged_in.$ == true) {
+    if (is_logged_in.value == true) {
       fetchAll();
     }
   }
@@ -84,7 +84,7 @@ class _AddressState extends State<Address> {
   fetchAll() {
     fetchCityList();
     fetchCountryList();
-    if (is_logged_in.$ == true) {
+    if (is_logged_in.value == true) {
       fetchShippingAddressList();
     }
     _isInitial = false;
@@ -110,8 +110,7 @@ class _AddressState extends State<Address> {
         _selected_city_name_list_for_update.add(address.city);
         _selected_city_list_for_update.add(getCityByPartialName(address.city));
         _selected_country_name_list_for_update.add(address.country);
-        _selected_country_list_for_update
-            .add(getCountryByPartialName(address.country));
+        _selected_country_list_for_update.add(getCountryByPartialName(address.country));
       });
     }
     setState(() {});
@@ -152,7 +151,7 @@ class _AddressState extends State<Address> {
 
   Future<void> _onRefresh() async {
     reset();
-    if (is_logged_in.$ == true) {
+    if (is_logged_in.value == true) {
       fetchAll();
     }
   }
@@ -294,7 +293,8 @@ class _AddressState extends State<Address> {
     afterAddingAnAddress();
   }
 
-  onAddressUpdate(context, index, id) async {
+  onAddressUpdate(context,index, id) async {
+
     var address = _addressControllerListForUpdate[index].text.toString();
     var postal_code = _postalCodeControllerListForUpdate[index].text.toString();
     var phone = _phoneControllerListForUpdate[index].text.toString();
@@ -321,14 +321,13 @@ class _AddressState extends State<Address> {
       return;
     }
 
-    var addressUpdateResponse = await AddressRepository()
-        .getAddressUpdateResponse(
-            id,
-            address,
-            _selected_country_name_list_for_update[index],
-            _selected_city_name_list_for_update[index],
-            postal_code,
-            phone);
+    var addressUpdateResponse = await AddressRepository().getAddressUpdateResponse(
+        id,
+        address,
+        _selected_country_name_list_for_update[index],
+        _selected_city_name_list_for_update[index],
+        postal_code,
+        phone);
 
     if (addressUpdateResponse.result == false) {
       ToastComponent.showDialog(addressUpdateResponse.message, context,
@@ -842,8 +841,7 @@ class _AddressState extends State<Address> {
                             onChanged: (City city) {
                               setState(() {
                                 _selected_city_list_for_update[index] = city;
-                                _selected_city_name_list_for_update[index] =
-                                    city.name;
+                                _selected_city_name_list_for_update[index] = city.name;
                               });
                             },
                           ),
@@ -860,8 +858,7 @@ class _AddressState extends State<Address> {
                         child: Container(
                           height: 40,
                           child: TextField(
-                            controller:
-                                _postalCodeControllerListForUpdate[index],
+                            controller: _postalCodeControllerListForUpdate[index],
                             autofocus: false,
                             decoration: InputDecoration(
                                 hintText: "Enter Postal Code",
@@ -903,8 +900,7 @@ class _AddressState extends State<Address> {
                             maxHeight: 300,
                             label: "Select a country",
                             showSearchBox: true,
-                            selectedItem:
-                                _selected_country_list_for_update[index],
+                            selectedItem: _selected_country_list_for_update[index],
                             dropdownSearchDecoration: InputDecoration(
                                 hintText: "Enter Postal Code",
                                 hintStyle: TextStyle(
@@ -929,10 +925,8 @@ class _AddressState extends State<Address> {
                                 contentPadding: EdgeInsets.only(left: 8.0)),
                             onChanged: (Country country) {
                               setState(() {
-                                _selected_country_list_for_update[index] =
-                                    country;
-                                _selected_country_name_list_for_update[index] =
-                                    country.name;
+                                _selected_country_list_for_update[index] = country;
+                                _selected_country_name_list_for_update[index] = country.name;
                               });
                             },
                           ),
@@ -1026,8 +1020,7 @@ class _AddressState extends State<Address> {
                               fontWeight: FontWeight.w600),
                         ),
                         onPressed: () {
-                          onAddressUpdate(
-                              context, index, _shippingAddressList[index].id);
+                          onAddressUpdate(context,index,_shippingAddressList[index].id);
                         },
                       ),
                     )
@@ -1064,7 +1057,7 @@ class _AddressState extends State<Address> {
   }
 
   buildAddressList() {
-    if (is_logged_in.$ == false) {
+    if (is_logged_in.value == false) {
       return Container(
           height: 100,
           child: Center(

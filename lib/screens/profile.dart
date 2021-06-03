@@ -36,7 +36,7 @@ class _ProfileState extends State<Profile> {
     // TODO: implement initState
     super.initState();
 
-    if (is_logged_in.$ == true) {
+    if (is_logged_in.value == true) {
       fetchAll();
     }
   }
@@ -51,7 +51,7 @@ class _ProfileState extends State<Profile> {
     fetchAll();
   }
 
-  onPopped(value) async {
+  onPopped(value) async{
     reset();
     fetchAll();
   }
@@ -128,14 +128,14 @@ class _ProfileState extends State<Profile> {
   }
 
   buildBody(context) {
-    if (is_logged_in.$ == false) {
+    if (is_logged_in.value == false) {
       return Container(
           height: 100,
           child: Center(
               child: Text(
-            "Please log in to see the profile",
-            style: TextStyle(color: MyTheme.font_grey),
-          )));
+                "Please log in to see the profile",
+                style: TextStyle(color: MyTheme.font_grey),
+              )));
     } else {
       return RefreshIndicator(
         color: MyTheme.accent_color,
@@ -352,8 +352,7 @@ class _ProfileState extends State<Profile> {
                       child: Text(
                         "Notification",
                         textAlign: TextAlign.center,
-                        style:
-                            TextStyle(color: MyTheme.font_grey, fontSize: 14),
+                        style: TextStyle(color: MyTheme.font_grey, fontSize: 14),
                       ),
                     )
                   ],
@@ -495,7 +494,7 @@ class _ProfileState extends State<Profile> {
                 borderRadius: BorderRadius.all(Radius.circular(100.0)),
                 child: FadeInImage.assetNetwork(
                   placeholder: 'assets/placeholder.png',
-                  image: AppConfig.BASE_PATH + "${avatar_original.$}",
+                  image: AppConfig.BASE_PATH + "${avatar_original.value}",
                   fit: BoxFit.fill,
                 )),
           ),
@@ -503,7 +502,7 @@ class _ProfileState extends State<Profile> {
         Padding(
           padding: const EdgeInsets.only(top: 8.0),
           child: Text(
-            "${user_name.$}",
+            "${user_name.value}",
             style: TextStyle(
                 fontSize: 14,
                 color: MyTheme.font_grey,
@@ -512,15 +511,15 @@ class _ProfileState extends State<Profile> {
         ),
         Padding(
             padding: const EdgeInsets.only(top: 4.0),
-            child: user_email.$ != "" && user_email.$ != null
+            child: user_email.value != "" && user_email.value != null
                 ? Text(
-                    "${user_email.$}",
+                    "${user_email.value}",
                     style: TextStyle(
                       color: MyTheme.medium_grey,
                     ),
                   )
                 : Text(
-                    "${user_phone.$}",
+                    "${user_phone.value}",
                     style: TextStyle(
                       color: MyTheme.medium_grey,
                     ),
@@ -571,7 +570,7 @@ class _ProfileState extends State<Profile> {
               )
             : Builder(
                 builder: (context) => GestureDetector(
-                  onTap: () {
+                  onTap: (){
                     _scaffoldKey.currentState.openDrawer();
                   },
                   child: Padding(

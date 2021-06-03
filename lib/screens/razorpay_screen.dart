@@ -92,12 +92,12 @@ class _RazorpayScreenState extends State<RazorpayScreen> {
     });
   }
 
-  onPaymentSuccess(payment_details) async {
-    var razorpayPaymentSuccessResponse = await PaymentRepository()
-        .getRazorpayPaymentSuccessResponse(
-            widget.payment_type, widget.amount, _order_id, payment_details);
+  onPaymentSuccess(payment_details) async{
 
-    if (razorpayPaymentSuccessResponse.result == false) {
+    var razorpayPaymentSuccessResponse = await PaymentRepository().getRazorpayPaymentSuccessResponse(widget.payment_type, widget.amount,_order_id, payment_details);
+
+    if(razorpayPaymentSuccessResponse.result == false ){
+
       Toast.show(razorpayPaymentSuccessResponse.message, context,
           duration: Toast.LENGTH_LONG, gravity: Toast.CENTER);
       Navigator.pop(context);
@@ -115,11 +115,15 @@ class _RazorpayScreenState extends State<RazorpayScreen> {
         return Wallet(from_recharge: true);
       }));
     }
+
+
   }
 
+
   buildBody() {
+
     String initial_url =
-        "${AppConfig.BASE_URL}/razorpay/pay-with-razorpay?payment_type=${widget.payment_type}&order_id=${_order_id}&amount=${widget.amount}&user_id=${user_id.$}";
+        "${AppConfig.BASE_URL}/razorpay/pay-with-razorpay?payment_type=${widget.payment_type}&order_id=${_order_id}&amount=${widget.amount}&user_id=${user_id.value}";
 
     //print("init url");
     //print(initial_url);
@@ -145,7 +149,7 @@ class _RazorpayScreenState extends State<RazorpayScreen> {
             onWebResourceError: (error) {},
             onPageFinished: (page) {
               //print(page.toString());
-              getData();
+                getData();
             },
           ),
         ),

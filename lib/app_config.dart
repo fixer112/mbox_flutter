@@ -4,15 +4,18 @@ var this_year = DateTime.now().year.toString();
 
 class AppConfig {
   static String copyright_text =
-      "Powered by Lazynerd "; //this shows in the splash screen
+      "@ Altechtic Solutions " + this_year; //this shows in the splash screen
   static String app_name = "Mbox"; //this shows in the splash screen
 
   //configure this
   static const bool HTTPS = false;
 
   //configure this
-  //static const DOMAIN_PATH = "192.168.0.113/ecommerce_demo";
-  static const DOMAIN_PATH = "10.0.2.2:8000"; //"access.mboxexpress.com";
+  static const DOMAIN_PATH =
+      "10.0.2.2:8000"; //"access.mboxexpress.com";//"192.168.0.106/ecommerce_demo_two"; //localhost
+  //static const DOMAIN_PATH = "demo.activeitzone.com/ecommerce_flutter_demo"; //inside a folder
+  //static const DOMAIN_PATH = "www.gaighat.com"; // directly inside the public folder
+
   //do not configure these below
   static const String API_ENDPATH = "api/v2";
   static const String PUBLIC_FOLDER = "public";
@@ -23,7 +26,5 @@ class AppConfig {
   //configure this if you are using amazon s3 like services
   //give direct link to file like https://[[bucketname]].s3.ap-southeast-1.amazonaws.com/
   //otherwise do not change anythink
-  static const String BASE_PATH = "${RAW_BASE_URL}/";
-
-  // /${PUBLIC_FOLDER}/";
+  static const String BASE_PATH = "${RAW_BASE_URL}/${PUBLIC_FOLDER}/";
 }

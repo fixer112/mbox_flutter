@@ -355,6 +355,7 @@ class _CategoryListState extends State<CategoryList> {
                       return CategoryProducts(
                         category_id: widget.parent_category_id,
                         category_name: widget.parent_category_name,
+
                       );
                     }));
                   },

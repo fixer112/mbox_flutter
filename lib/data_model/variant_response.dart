@@ -19,14 +19,14 @@ class VariantResponse {
 
   int product_id;
   String variant;
-  int price;
+  double price;
   String price_string;
   int stock;
 
   factory VariantResponse.fromJson(Map<String, dynamic> json) => VariantResponse(
     product_id: json["product_id"],
     variant: json["variant"],
-    price: json["price"],
+    price: json["price"].toDouble(),
     price_string: json["price_string"],
     stock: json["stock"],
   );

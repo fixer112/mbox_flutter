@@ -21,7 +21,7 @@ class _ProfileEditState extends State<ProfileEdit> {
   ScrollController _mainScrollController = ScrollController();
 
   TextEditingController _nameController =
-      TextEditingController(text: "${user_name.$}");
+      TextEditingController(text: "${user_name.value}");
   TextEditingController _passwordController = TextEditingController();
   TextEditingController _passwordConfirmController = TextEditingController();
 
@@ -52,48 +52,41 @@ class _ProfileEditState extends State<ProfileEdit> {
               ));
     } else if (status.isRestricted) {
       ToastComponent.showDialog(
-          "Go to your application settings and give photo permission ", context,
-          gravity: Toast.CENTER, duration: Toast.LENGTH_LONG);
+          "Go to your application settings and give photo permission ",
+          context,
+          gravity: Toast.CENTER,
+          duration: Toast.LENGTH_LONG);
     } else if (status.isGranted) {
       //file = await ImagePicker.pickImage(source: ImageSource.camera);
-      final picker = ImagePicker();
-      final pickedFile = await picker.getImage(source: ImageSource.gallery);
+      _file = await ImagePicker.pickImage(source: ImageSource.gallery);
 
-      setState(() {
-        if (pickedFile != null) {
-          _file = File(pickedFile.path);
-        } else {
-          print('No image selected.');
-        }
-      });
-    }
+      if (_file == null) {
+        ToastComponent.showDialog("No file is chosen", context,
+            gravity: Toast.CENTER, duration: Toast.LENGTH_LONG);
+        return;
+      }
 
-    if (_file == null) {
-      ToastComponent.showDialog("No file is chosen", context,
-          gravity: Toast.CENTER, duration: Toast.LENGTH_LONG);
-      return;
-    }
+      //return;
+      String base64Image = base64Encode(_file.readAsBytesSync());
+      String fileName = _file.path.split("/").last;
 
-    //return;
-    String base64Image = base64Encode(_file.readAsBytesSync());
-    String fileName = _file.path.split("/").last;
+      var profileImageUpdateResponse =
+          await ProfileRepository().getProfileImageUpdateResponse(
+        base64Image,
+        fileName,
+      );
 
-    var profileImageUpdateResponse =
-        await ProfileRepository().getProfileImageUpdateResponse(
-      base64Image,
-      fileName,
-    );
+      if (profileImageUpdateResponse.result == false) {
+        ToastComponent.showDialog(profileImageUpdateResponse.message, context,
+            gravity: Toast.CENTER, duration: Toast.LENGTH_LONG);
+        return;
+      } else {
+        ToastComponent.showDialog(profileImageUpdateResponse.message, context,
+            gravity: Toast.CENTER, duration: Toast.LENGTH_LONG);
 
-    if (profileImageUpdateResponse.result == false) {
-      ToastComponent.showDialog(profileImageUpdateResponse.message, context,
-          gravity: Toast.CENTER, duration: Toast.LENGTH_LONG);
-      return;
-    } else {
-      ToastComponent.showDialog(profileImageUpdateResponse.message, context,
-          gravity: Toast.CENTER, duration: Toast.LENGTH_LONG);
-
-      avatar_original.$ = profileImageUpdateResponse.path;
-      setState(() {});
+        avatar_original.value = profileImageUpdateResponse.path;
+        setState(() {});
+      }
     }
   }
 
@@ -148,7 +141,7 @@ class _ProfileEditState extends State<ProfileEdit> {
       ToastComponent.showDialog(profileUpdateResponse.message, context,
           gravity: Toast.CENTER, duration: Toast.LENGTH_LONG);
 
-      user_name.$ = name;
+      user_name.value = name;
       setState(() {});
     }
   }
@@ -181,7 +174,7 @@ class _ProfileEditState extends State<ProfileEdit> {
   }
 
   buildBody(context) {
-    if (is_logged_in.$ == false) {
+    if (is_logged_in.value == false) {
       return Container(
           height: 100,
           child: Center(
@@ -239,7 +232,7 @@ class _ProfileEditState extends State<ProfileEdit> {
                     borderRadius: BorderRadius.all(Radius.circular(100.0)),
                     child: FadeInImage.assetNetwork(
                       placeholder: 'assets/placeholder.png',
-                      image: AppConfig.BASE_PATH + "${avatar_original.$}",
+                      image: AppConfig.BASE_PATH + "${avatar_original.value}",
                       fit: BoxFit.fill,
                     )),
               ),

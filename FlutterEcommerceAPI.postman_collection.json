@@ -1143,13 +1143,13 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "{{baseurl}}/purchase-history-details/1166",
+							"raw": "{{baseurl}}/purchase-history-details/1025",
 							"host": [
 								"{{baseurl}}"
 							],
 							"path": [
 								"purchase-history-details",
-								"1166"
+								"1025"
 							]
 						}
 					},
@@ -1953,6 +1953,17 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "nagad begin",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": ""
+						}
+					},
+					"response": []
 				}
 			]
 		},
@@ -2132,6 +2143,173 @@
 			]
 		},
 		{
+			"name": "Delivery boy related",
+			"item": [
+				{
+					"name": "Dashboard summary",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": ""
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delivery List",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth-token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseurl}}/{{delivery-boy-prefix}}/deliveries/completed/{{delivery-boy-user-id}}?date_range=\"\"&payment_type=\"\"",
+							"host": [
+								"{{baseurl}}"
+							],
+							"path": [
+								"{{delivery-boy-prefix}}",
+								"deliveries",
+								"completed",
+								"{{delivery-boy-user-id}}"
+							],
+							"query": [
+								{
+									"key": "date_range",
+									"value": "\"\""
+								},
+								{
+									"key": "payment_type",
+									"value": "\"\""
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "earning or collection summary",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth-token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseurl}}/{{delivery-boy-prefix}}/earning/{{delivery-boy-user-id}}",
+							"host": [
+								"{{baseurl}}"
+							],
+							"path": [
+								"{{delivery-boy-prefix}}",
+								"earning",
+								"{{delivery-boy-user-id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "earning or collection history",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": ""
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "cancel request",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": ""
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delivery status change",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth-token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"order_id\":1025,\r\n    \"delivery_boy_id\":{{delivery-boy-user-id}},\r\n    \"status\":\"delivered\"\r\n}"
+						},
+						"url": {
+							"raw": "{{baseurl}}/{{delivery-boy-prefix}}/change-delivery-status",
+							"host": [
+								"{{baseurl}}"
+							],
+							"path": [
+								"{{delivery-boy-prefix}}",
+								"change-delivery-status"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "chat",
+			"item": [
+				{
+					"name": "Conversations",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": ""
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "messages",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseurl}}/chat/messages/{{user_id}}",
+							"host": [
+								"{{baseurl}}"
+							],
+							"path": [
+								"chat",
+								"messages",
+								"{{user_id}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
 			"name": "Get all banners",
 			"request": {
 				"method": "GET",
@@ -2271,15 +2449,23 @@
 	"variable": [
 		{
 			"key": "auth-token",
-			"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImp0aSI6IjdjYmM2YWRlYzdmNzM2NGM0MGJiMDZiNzA5NWE2NWQyN2ZlZjhhYjEyNGY4MmMxNWVlMTE1ODU0OTZmMzllMzUwY2QyY2UzZjRlNjIwNTJjIn0.eyJhdWQiOiIzIiwianRpIjoiN2NiYzZhZGVjN2Y3MzY0YzQwYmIwNmI3MDk1YTY1ZDI3ZmVmOGFiMTI0ZjgyYzE1ZWUxMTU4NTQ5NmYzOWUzNTBjZDJjZTNmNGU2MjA1MmMiLCJpYXQiOjE2MTcxMDY5NjQsIm5iZiI6MTYxNzEwNjk2NCwiZXhwIjoxNjQ4NjQyOTY0LCJzdWIiOiI4Iiwic2NvcGVzIjpbXX0.LYXjM9tIK58rLZTfAQ_1sJgRDN2tU6l5ui4PBN-TZrSAt6Ap-v_AkPysWGk9meRioYf2ItGiI3HYUMjWLkEey6iBzT7Oq1pD6_XcRqRyNG05FG3_UAd-tOHQXUGiVhuAHrMqt7olhibRxrpj5yohZF3VX8cEsoqBCVxHUYyTOU097gZvLwTty1V9Sape8mZO9E9hBWEuDIUIqQ5LdIT0WA_XfbRfzAcOLS0J20K2MLEF1iTPcXOE-lAfZgaxPt_DqBOUKbRAi_jL2ZoPttUjEGpHkSjCn5D_7mm3kJwOfpQIXkqXdd2SiY9ZOZAz8ga98okiss64HOn3SghrHinwH4JzJ3oOpIDCgvWPeQy-SL0t_Hr-6vVvPe48YSTmaJEkZffNBwjvLdGxXEJTULXzk_1alHtrytMMU6ut7JOJetmBzUuRGkhrrQjTvVp7L6b7jwC4mnNs1vLeP5MPIsVqO0Ch07hGKIzl8-OpiM0kNqgj-BiH-8nkVsBZsyKw_J2_AgIEP_KdVNL0opwPOInAM0YT2Kx7iasxwm7TqKmYFwthPpK-EcFWW1kz-Ipko29f_SoNim5-F2qxqfzhBFL9oNTbudmvvin_x7m2IUufWVQjXlS2JNckWMMMRVljcvkY5q85FmIv0LG-_NcpL_8iHb2VizYOMCu4MvoCpgmnsEA"
+			"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImp0aSI6IjA2YzFmNTg5ZDRhZWExM2M5NmRlOGJkYTU3N2JjZDMwZjU0MzNlYjg2ZGJjNjYxOWZlZGQ0NGQwNDE3NGM0NjU4NzFhZWUyNmJlOTcyMDg2In0.eyJhdWQiOiIxIiwianRpIjoiMDZjMWY1ODlkNGFlYTEzYzk2ZGU4YmRhNTc3YmNkMzBmNTQzM2ViODZkYmM2NjE5ZmVkZDQ0ZDA0MTc0YzQ2NTg3MWFlZTI2YmU5NzIwODYiLCJpYXQiOjE2MjIxMDIwNDksIm5iZiI6MTYyMjEwMjA0OSwiZXhwIjoxNjUzNjM4MDQ5LCJzdWIiOiI4Iiwic2NvcGVzIjpbXX0.n9BMDf-QIByUav2pASbpPMUQVqTQMZL1DsikHTjch2dz_QeEaVqfd3KORcqVVaLIbsVd4uUu8hZKgR435_8rba0QZ1ggwyulhv6hoUSGdA7yZcGKRFAqUBZJr8F4s7DVEo3QvnhsqkBz-pxLDUOT4t6t0_67NwYADZ3ASbab3E9kjmXgbEruo0XvmZ78PP8RqGjpf-4D2OBctOw4Jdk_pRjd1LwQv8b2W8I9tONLzMXvHE7EJdIeEBM5LeUd9bBz_cnn8zI02qCnUidGc6LeWyGA0eyvuRUo_nRnhStYHOOjKY0Fb_BzEivIuwNp04ev03aJrfNENh1CGUDrY9n2sALN1fRziLnImwtpVIhXvUSgbDVhJyvmMdvcKvYmNrDLxMxnhsdZ9-uGTNFLU7ViqbwB6oLhnF5rqOKcy9WgOBd3-uVjU3QOsZ_qMndmj5cMP5LYZT74bo4gIBRN_7lYGMzPmvTzjwAuC6UD-O1y_rB8gVVlJkN8cyVs8LvwE_V9vHepAaelxpkLVlwWOTd350RxHO7n0B51rrg3Y8dqS-cdgxA5h1-VRugOuXwRqV7lDKFVm9naOStfMl4o4Dgh8bjb03GzG6W1zJXqtDuUbpOKSOchjpuxfH2NLM2LxUZLH6RkrV9YFAin8N6imZ82GVn9l_GAkZOaMGFvTKSp-_Y"
 		},
 		{
 			"key": "baseurl",
-			"value": "http://192.168.0.106/ecommerce_demo/api/v2"
+			"value": "http://localhost/ecommerce_demo_two/api/v2"
 		},
 		{
 			"key": "user_id",
 			"value": "8"
+		},
+		{
+			"key": "delivery-boy-prefix",
+			"value": "delivery-boy"
+		},
+		{
+			"key": "delivery-boy-user-id",
+			"value": "6"
 		}
 	]
 }

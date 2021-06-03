@@ -15,7 +15,7 @@ import 'package:active_ecommerce_flutter/data_model/nagad_payment_process_respon
 class PaymentRepository {
   Future<List<PaymentTypeResponse>> getPaymentResponseList({mode = ""}) async {
     final response = await http.get(
-      Uri.parse("${AppConfig.BASE_URL}/payment-types?mode=${mode}"),
+      "${AppConfig.BASE_URL}/payment-types?mode=${mode}",
     );
 
     return paymentTypeResponseFromJson(response.body);
@@ -25,15 +25,14 @@ class PaymentRepository {
       @required int owner_id, @required payment_method) async {
     var post_body = jsonEncode({
       "owner_id": "${owner_id}",
-      "user_id": "${user_id.$}",
+      "user_id": "${user_id.value}",
       "payment_type": "${payment_method}"
     });
 
-    final response = await http.post(
-        Uri.parse("${AppConfig.BASE_URL}/order/store"),
+    final response = await http.post("${AppConfig.BASE_URL}/order/store",
         headers: {
           "Content-Type": "application/json",
-          "Authorization": "Bearer ${access_token.$}"
+          "Authorization": "Bearer ${access_token.value}"
         },
         body: post_body);
 
@@ -44,8 +43,7 @@ class PaymentRepository {
   Future<PaypalUrlResponse> getPaypalUrlResponse(@required String payment_type,
       @required int order_id, @required double amount) async {
     final response = await http.get(
-      Uri.parse(
-          "${AppConfig.BASE_URL}/paypal/payment/url?payment_type=${payment_type}&order_id=${order_id}&amount=${amount}&user_id=${user_id.$}"),
+      "${AppConfig.BASE_URL}/paypal/payment/url?payment_type=${payment_type}&order_id=${order_id}&amount=${amount}&user_id=${user_id.value}",
     );
 
     print(response.body.toString());
@@ -58,18 +56,18 @@ class PaymentRepository {
       @required double amount) async {
     var post_body = jsonEncode({
       "owner_id": "${owner_id}",
-      "user_id": "${user_id.$}",
+      "user_id": "${user_id.value}",
       "payment_type": "${payment_method}",
       "amount": "${amount}"
     });
 
-    final response = await http.post(
-        Uri.parse("${AppConfig.BASE_URL}/payments/pay/wallet"),
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": "Bearer ${access_token.$}"
-        },
-        body: post_body);
+    final response =
+        await http.post("${AppConfig.BASE_URL}/payments/pay/wallet",
+            headers: {
+              "Content-Type": "application/json",
+              "Authorization": "Bearer ${access_token.value}"
+            },
+            body: post_body);
 
     //print(response.body.toString());
     return orderCreateResponseFromJson(response.body);
@@ -79,15 +77,14 @@ class PaymentRepository {
       @required int owner_id, @required payment_method) async {
     var post_body = jsonEncode({
       "owner_id": "${owner_id}",
-      "user_id": "${user_id.$}",
+      "user_id": "${user_id.value}",
       "payment_type": "${payment_method}"
     });
 
-    final response = await http.post(
-        Uri.parse("${AppConfig.BASE_URL}/payments/pay/cod"),
+    final response = await http.post("${AppConfig.BASE_URL}/payments/pay/cod",
         headers: {
           "Content-Type": "application/json",
-          "Authorization": "Bearer ${access_token.$}"
+          "Authorization": "Bearer ${access_token.value}"
         },
         body: post_body);
 
@@ -101,18 +98,17 @@ class PaymentRepository {
       @required int order_id,
       @required String payment_details) async {
     var post_body = jsonEncode({
-      "user_id": "${user_id.$}",
+      "user_id": "${user_id.value}",
       "payment_type": "${payment_type}",
       "order_id": "${order_id}",
       "amount": "${amount}",
       "payment_details": "${payment_details}"
     });
 
-    final response = await http.post(
-        Uri.parse("${AppConfig.BASE_URL}/razorpay/success"),
+    final response = await http.post("${AppConfig.BASE_URL}/razorpay/success",
         headers: {
           "Content-Type": "application/json",
-          "Authorization": "Bearer ${access_token.$}"
+          "Authorization": "Bearer ${access_token.value}"
         },
         body: post_body);
 
@@ -125,8 +121,8 @@ class PaymentRepository {
       @required int order_id,
       @required double amount) async {
     final response = await http.get(
-      Uri.parse(
-          "${AppConfig.BASE_URL}/bkash/begin?payment_type=${payment_type}&order_id=${order_id}&amount=${amount}&user_id=${user_id.$}"),
+      "${AppConfig.BASE_URL}/bkash/begin?payment_type=${payment_type}&order_id=${order_id}&amount=${amount}&user_id=${user_id.value}",
+      headers: {"Authorization": "Bearer ${access_token.value}"},
     );
 
     print(response.body.toString());
@@ -139,18 +135,17 @@ class PaymentRepository {
       @required int order_id,
       @required String payment_details) async {
     var post_body = jsonEncode({
-      "user_id": "${user_id.$}",
+      "user_id": "${user_id.value}",
       "payment_type": "${payment_type}",
       "order_id": "${order_id}",
       "amount": "${amount}",
       "payment_details": "${payment_details}"
     });
 
-    final response = await http.post(
-        Uri.parse("${AppConfig.BASE_URL}/bkash/process"),
+    final response = await http.post("${AppConfig.BASE_URL}/bkash/process",
         headers: {
           "Content-Type": "application/json",
-          "Authorization": "Bearer ${access_token.$}"
+          "Authorization": "Bearer ${access_token.value}"
         },
         body: post_body);
 
@@ -163,8 +158,8 @@ class PaymentRepository {
       @required int order_id,
       @required double amount) async {
     final response = await http.get(
-      Uri.parse(
-          "${AppConfig.BASE_URL}/nagad/begin?payment_type=${payment_type}&order_id=${order_id}&amount=${amount}&user_id=${user_id.$}"),
+      "${AppConfig.BASE_URL}/nagad/begin?payment_type=${payment_type}&order_id=${order_id}&amount=${amount}&user_id=${user_id.value}",
+      headers: {"Authorization": "Bearer ${access_token.value}"},
     );
 
     print(response.body.toString());
@@ -177,18 +172,17 @@ class PaymentRepository {
       @required int order_id,
       @required String payment_details) async {
     var post_body = jsonEncode({
-      "user_id": "${user_id.$}",
+      "user_id": "${user_id.value}",
       "payment_type": "${payment_type}",
       "order_id": "${order_id}",
       "amount": "${amount}",
       "payment_details": "${payment_details}"
     });
 
-    final response = await http.post(
-        Uri.parse("${AppConfig.BASE_URL}/nagad/process"),
+    final response = await http.post("${AppConfig.BASE_URL}/nagad/process",
         headers: {
           "Content-Type": "application/json",
-          "Authorization": "Bearer ${access_token.$}"
+          "Authorization": "Bearer ${access_token.value}"
         },
         body: post_body);
 

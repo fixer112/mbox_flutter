@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:active_ecommerce_flutter/my_theme.dart';
-import 'package:active_ecommerce_flutter/dummy_data/chats.dart';
 import 'dart:ui';
 import 'package:intl/intl.dart';
 import 'package:flutter/painting.dart';
@@ -8,15 +7,23 @@ import 'package:flutter_chat_bubble/bubble_type.dart';
 import 'package:flutter_chat_bubble/chat_bubble.dart';
 import 'dart:async';
 import 'package:flutter_chat_bubble/clippers/chat_bubble_clipper_5.dart';
+import 'package:active_ecommerce_flutter/app_config.dart';
+import 'package:active_ecommerce_flutter/repositories/chat_repository.dart';
+import 'package:active_ecommerce_flutter/helpers/shimmer_helper.dart';
+import 'package:active_ecommerce_flutter/helpers/shared_value_helper.dart';
 
 class Chat extends StatefulWidget {
   Chat({
     Key key,
+    this.conversation_id,
     this.messenger_name,
+    this.messenger_title,
     this.messenger_image,
   }) : super(key: key);
 
+  final int conversation_id;
   final String messenger_name;
+  final String messenger_title;
   final String messenger_image;
 
   @override
@@ -26,7 +33,123 @@ class Chat extends StatefulWidget {
 class _ChatState extends State<Chat> {
   final TextEditingController _chatTextController = TextEditingController();
   final ScrollController _chatScrollController = ScrollController();
+  final ScrollController _xcrollController = ScrollController();
   final lastKey = GlobalKey();
+
+  var uid = user_id.value;
+
+  List<dynamic> _list = [];
+  bool _isInitial = true;
+  int _page = 1;
+  int _totalData = 0;
+  bool _showLoadingContainer = false;
+  int _last_id = 0;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+
+    fetchData();
+  }
+
+  fetchData() async {
+    var messageResponse = await ChatRepository().getMessageResponse(
+        conversation_id: widget.conversation_id, page: _page);
+    _list.addAll(messageResponse.messages);
+    _isInitial = false;
+    _totalData = messageResponse.meta.total;
+    _showLoadingContainer = false;
+    _last_id = _list[0].id;
+    setState(() {});
+
+    fetch_new_message();
+  }
+
+  reset() {
+    _list.clear();
+    _isInitial = true;
+    _totalData = 0;
+    _page = 1;
+    _showLoadingContainer = false;
+    _last_id = 0;
+    setState(() {});
+  }
+
+  Future<void> _onRefresh() async {
+    reset();
+    fetchData();
+  }
+
+  onPressLoadMore() {
+    setState(() {
+      _page++;
+    });
+    _showLoadingContainer = true;
+    fetchData();
+  }
+
+  onTapSendMessage() async {
+    var chatText = _chatTextController.text.toString();
+    _chatTextController.clear();
+    //print(chatText);
+    if (chatText != "") {
+      final DateTime now = DateTime.now();
+      final DateFormat date_formatter = DateFormat('yyyy-MM-dd');
+      final DateFormat time_formatter = DateFormat('hh:ss');
+      final String formatted_date = date_formatter.format(now);
+      final String formatted_time = time_formatter.format(now);
+
+      var messageResponse = await ChatRepository().getInserMessageResponse(
+          conversation_id: widget.conversation_id, message: chatText);
+      _list = [
+        messageResponse.messages,
+        _list,
+      ].expand((x) => x).toList(); //prepend
+      _last_id = _list[0].id;
+      setState(() {});
+
+      _xcrollController.animateTo(
+        _xcrollController.position.maxScrollExtent + 100,
+        curve: Curves.easeOut,
+        duration: const Duration(milliseconds: 500),
+      );
+    }
+  }
+
+  fetch_new_message() async {
+    print('fetch new message hit');
+    print('-------------');
+    await Future.delayed(const Duration(seconds: 5), () {
+      print('fetch new message start');
+      print('##################');
+      get_new_message();
+    }).then((value) {
+      print('again');
+      fetch_new_message();
+    });
+  }
+
+  get_new_message() async {
+    var messageResponse = await ChatRepository().getNewMessageResponse(
+        conversation_id: widget.conversation_id, last_message_id: _last_id);
+    _list = [
+      messageResponse.messages,
+      _list,
+    ].expand((x) => x).toList(); //prepend
+    _last_id = _list[0].id;
+    setState(() {});
+
+    // if new message comes in
+    if( messageResponse.messages.length > 0){
+      _xcrollController.animateTo(
+        _xcrollController.position.maxScrollExtent + 100,
+        curve: Curves.easeOut,
+        duration: const Duration(milliseconds: 500),
+      );
+    }
+
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -36,9 +159,30 @@ class _ChatState extends State<Chat> {
         body: Stack(
           children: [
             CustomScrollView(
+              controller: _xcrollController,
+              physics: const BouncingScrollPhysics(
+                  parent: AlwaysScrollableScrollPhysics()),
               slivers: [
                 SliverList(
                   delegate: SliverChildListDelegate([
+                    FlatButton(
+                      minWidth: MediaQuery.of(context).size.width,
+                      height: 36,
+                      color: MyTheme.accent_color,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(0.0),
+                      ),
+                      child: Text(
+                        "Load More",
+                        style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600),
+                      ),
+                      onPressed: () {
+                        onPressLoadMore();
+                      },
+                    ),
                     Padding(
                       padding: const EdgeInsets.all(16.0),
                       child: buildChatList(),
@@ -50,6 +194,7 @@ class _ChatState extends State<Chat> {
                 )
               ],
             ),
+            Align(alignment: Alignment.center, child: buildLoadingContainer()),
             //original
             Align(
               alignment: Alignment.bottomCenter,
@@ -72,6 +217,19 @@ class _ChatState extends State<Chat> {
             )
           ],
         ));
+  }
+
+  Container buildLoadingContainer() {
+    return Container(
+      height: _showLoadingContainer ? 36 : 0,
+      width: double.infinity,
+      color: Colors.white,
+      child: Center(
+        child: Text(_totalData == _list.length
+            ? "No More Items"
+            : "Loading More Items ..."),
+      ),
+    );
   }
 
   AppBar buildAppBar(BuildContext context) {
@@ -102,25 +260,58 @@ class _ChatState extends State<Chat> {
                     ),
                     child: ClipRRect(
                         borderRadius: BorderRadius.circular(35),
-                        child: Image.asset(widget.messenger_image)),
+                        child: FadeInImage.assetNetwork(
+                          placeholder: 'assets/placeholder.png',
+                          image: AppConfig.BASE_PATH + widget.messenger_image,
+                          fit: BoxFit.contain,
+                        )),
                   ),
                   Container(
                     width: 220,
                     child: Padding(
                       padding: EdgeInsets.only(left: 8.0),
-                      child: Text(
-                        widget.messenger_name,
-                        textAlign: TextAlign.left,
-                        overflow: TextOverflow.ellipsis,
-                        maxLines: 2,
-                        style: TextStyle(
-                            color: MyTheme.font_grey,
-                            fontSize: 14,
-                            height: 1.6,
-                            fontWeight: FontWeight.w600),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            widget.messenger_name,
+                            textAlign: TextAlign.left,
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 2,
+                            style: TextStyle(
+                                color: MyTheme.font_grey,
+                                fontSize: 14,
+                                height: 1.6,
+                                fontWeight: FontWeight.w600),
+                          ),
+                          Text(
+                            widget.messenger_title,
+                            textAlign: TextAlign.left,
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 1,
+                            style: TextStyle(
+                              color: MyTheme.medium_grey,
+                              fontSize: 12,
+                              height: 1.6,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ),
+                  Spacer(),
+                  InkWell(
+                    onTap: () {
+                      _onRefresh();
+                    },
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Icon(
+                        Icons.rotate_left,
+                        color: MyTheme.font_grey,
+                      ),
+                    ),
+                  )
                 ])),
       ),
       elevation: 0.0,
@@ -128,39 +319,46 @@ class _ChatState extends State<Chat> {
     );
   }
 
-  SingleChildScrollView buildChatList() {
-    return SingleChildScrollView(
-      child: ListView.builder(
-        key: lastKey,
-        controller: _chatScrollController,
-        itemCount: chatList.length,
-        scrollDirection: Axis.vertical,
-        physics: NeverScrollableScrollPhysics(),
-        shrinkWrap: true,
-        itemBuilder: (context, index) {
-          return Padding(
-            padding: const EdgeInsets.only(bottom: 8.0),
-            child: buildChatItem(index),
-          );
-        },
-      ),
-    );
+  buildChatList() {
+    if (_isInitial && _list.length == 0) {
+      return SingleChildScrollView(
+          child: ShimmerHelper()
+              .buildListShimmer(item_count: 10, item_height: 100.0));
+    } else if (_list.length > 0) {
+      return SingleChildScrollView(
+        child: ListView.builder(
+          key: lastKey,
+          controller: _chatScrollController,
+          itemCount: _list.length,
+          scrollDirection: Axis.vertical,
+          physics: NeverScrollableScrollPhysics(),
+          shrinkWrap: true,
+          reverse: true,
+          itemBuilder: (context, index) {
+            return Padding(
+              padding: const EdgeInsets.only(bottom: 8.0),
+              child: buildChatItem(index),
+            );
+          },
+        ),
+      );
+    } else if (_totalData == 0) {
+      return Center(child: Text("No data is available"));
+    } else {
+      return Container(); // should never be happening
+    }
   }
 
   buildChatItem(index) {
-    return chatList[index].is_sender
-        ? getSenderView(
-            ChatBubbleClipper5(type: BubbleType.sendBubble),
-            context,
-            chatList[index].text,
-            chatList[index].date,
-            chatList[index].time)
+    return _list[index].user_id == uid
+        ? getSenderView(ChatBubbleClipper5(type: BubbleType.sendBubble),
+            context, _list[index].message, _list[index].date, _list[index].time)
         : getReceiverView(
             ChatBubbleClipper5(type: BubbleType.receiverBubble),
             context,
-            chatList[index].text,
-            chatList[index].date,
-            chatList[index].time);
+            _list[index].message,
+            _list[index].date,
+            _list[index].time);
   }
 
   Row buildMessageSendingRow(BuildContext context) {
@@ -201,37 +399,7 @@ class _ChatState extends State<Chat> {
           padding: const EdgeInsets.all(8.0),
           child: GestureDetector(
             onTap: () {
-              //print('dd');
-              var chatText = _chatTextController.text.toString();
-              //print(chatText);
-              if (chatText != "") {
-                final DateTime now = DateTime.now();
-                final DateFormat date_formatter = DateFormat('yyyy-MM-dd');
-                final DateFormat time_formatter = DateFormat('hh:ss');
-                final String formatted_date = date_formatter.format(now);
-                final String formatted_time = time_formatter.format(now);
-                /* print(chatText);
-                print(formatted_date);
-                print(formatted_time);
-                print("--------------------");*/
-                var a_chat_item = AChat(
-                    text: chatText,
-                    date: formatted_date,
-                    time: formatted_time,
-                    is_sender: true);
-                setState(() {
-                  chatList.add(a_chat_item);
-                });
-
-                //print(_chatScrollController.positions.elementAt(0).viewportDimension);
-
-                /*_chatScrollController.animateTo(
-                      500,
-                      duration: Duration(milliseconds: 500),
-                      curve: Curves.fastOutSlowIn);*/
-
-                _chatScrollController.jumpTo(200);
-              }
+              onTapSendMessage();
             },
             child: Container(
               width: 40,

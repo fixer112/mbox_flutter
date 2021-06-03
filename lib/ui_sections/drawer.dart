@@ -55,17 +55,18 @@ class _MainDrawerState extends State<MainDrawer> {
         child: SingleChildScrollView(
           child: Column(
             children: <Widget>[
-              is_logged_in.$ == true
+              is_logged_in.value == true
                   ? ListTile(
                       leading: CircleAvatar(
                         backgroundImage: NetworkImage(
-                          AppConfig.BASE_PATH + "${avatar_original.$}",
+                          AppConfig.BASE_PATH + "${avatar_original.value}",
                         ),
                       ),
-                      title: Text("${user_name.$}"),
-                      subtitle: user_email.$ != "" && user_email.$ != null
-                          ? Text("${user_email.$}")
-                          : Text("${user_phone.$}"))
+                      title: Text("${user_name.value}"),
+                      subtitle:
+                          user_email.value != "" && user_email.value != null
+                              ? Text("${user_email.value}")
+                              : Text("${user_phone.value}"))
                   : Text('Not logged in',
                       style: TextStyle(
                           color: Color.fromRGBO(153, 153, 153, 1),
@@ -85,7 +86,7 @@ class _MainDrawerState extends State<MainDrawer> {
                       return Main();
                     }));
                   }),
-              is_logged_in.$ == true
+              is_logged_in.value == true
                   ? ListTile(
                       visualDensity:
                           VisualDensity(horizontal: -4, vertical: -4),
@@ -102,7 +103,7 @@ class _MainDrawerState extends State<MainDrawer> {
                         }));
                       })
                   : Container(),
-              is_logged_in.$ == true
+              is_logged_in.value == true
                   ? ListTile(
                       visualDensity:
                           VisualDensity(horizontal: -4, vertical: -4),
@@ -119,7 +120,7 @@ class _MainDrawerState extends State<MainDrawer> {
                         }));
                       })
                   : Container(),
-              is_logged_in.$ == true
+              is_logged_in.value == true
                   ? ListTile(
                       visualDensity:
                           VisualDensity(horizontal: -4, vertical: -4),
@@ -136,7 +137,7 @@ class _MainDrawerState extends State<MainDrawer> {
                         }));
                       })
                   : Container(),
-              (is_logged_in.$ == true && false)
+              (is_logged_in.value == true)
                   ? ListTile(
                       visualDensity:
                           VisualDensity(horizontal: -4, vertical: -4),
@@ -147,16 +148,13 @@ class _MainDrawerState extends State<MainDrawer> {
                               color: Color.fromRGBO(153, 153, 153, 1),
                               fontSize: 14)),
                       onTap: () {
-                        ToastComponent.showDialog("Coming soon", context,
-                            gravity: Toast.CENTER, duration: Toast.LENGTH_LONG);
-                        return;
                         Navigator.push(context,
                             MaterialPageRoute(builder: (context) {
                           return MessengerList();
                         }));
                       })
                   : Container(),
-              is_logged_in.$ == true
+              is_logged_in.value == true
                   ? ListTile(
                       visualDensity:
                           VisualDensity(horizontal: -4, vertical: -4),
@@ -174,7 +172,7 @@ class _MainDrawerState extends State<MainDrawer> {
                       })
                   : Container(),
               Divider(height: 24),
-              is_logged_in.$ == false
+              is_logged_in.value == false
                   ? ListTile(
                       visualDensity:
                           VisualDensity(horizontal: -4, vertical: -4),
@@ -191,7 +189,7 @@ class _MainDrawerState extends State<MainDrawer> {
                         }));
                       })
                   : Container(),
-              is_logged_in.$ == true
+              is_logged_in.value == true
                   ? ListTile(
                       visualDensity:
                           VisualDensity(horizontal: -4, vertical: -4),

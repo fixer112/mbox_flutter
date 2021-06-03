@@ -36,10 +36,10 @@ class _RechargeWalletState extends State<RechargeWallet> {
     super.initState();
 
     /*print("user data");
-    print(is_logged_in.$);
-    print(access_token.$);
-    print(user_id.$);
-    print(user_name.$);*/
+    print(is_logged_in.value);
+    print(access_token.value);
+    print(user_id.value);
+    print(user_name.value);*/
 
     fetchAll();
   }

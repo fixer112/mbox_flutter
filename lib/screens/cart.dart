@@ -33,12 +33,12 @@ class _CartState extends State<Cart> {
     super.initState();
 
     /*print("user data");
-    print(is_logged_in.$);
-    print(access_token.$);
-    print(user_id.$);
-    print(user_name.$);*/
+    print(is_logged_in.value);
+    print(access_token.value);
+    print(user_id.value);
+    print(user_name.value);*/
 
-    if (is_logged_in.$ == true) {
+    if (is_logged_in.value == true) {
       fetchData();
     }
   }
@@ -50,8 +50,9 @@ class _CartState extends State<Cart> {
   }
 
   fetchData() async {
-    var cartResponseList =
-        await CartRepository().getCartResponseList(user_id.$);
+
+  var cartResponseList =
+        await CartRepository().getCartResponseList(user_id.value);
 
     if (cartResponseList != null && cartResponseList.length > 0) {
       _shopList = cartResponseList;
@@ -470,7 +471,7 @@ class _CartState extends State<Cart> {
   }
 
   buildCartSellerList() {
-    if (is_logged_in.$ == false) {
+    if (is_logged_in.value == false) {
       return Container(
           height: 100,
           child: Center(

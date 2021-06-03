@@ -3,6 +3,7 @@ import 'package:active_ecommerce_flutter/screens/filter.dart';
 import 'package:active_ecommerce_flutter/screens/flash_deal_list.dart';
 import 'package:active_ecommerce_flutter/screens/todays_deal_products.dart';
 import 'package:active_ecommerce_flutter/screens/top_selling_products.dart';
+import 'package:active_ecommerce_flutter/screens/category_products.dart';
 import 'package:active_ecommerce_flutter/screens/category_list.dart';
 import 'package:active_ecommerce_flutter/ui_sections/drawer.dart';
 import 'package:flutter/material.dart';
@@ -218,7 +219,7 @@ class _HomeState extends State<Home> {
                   return Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 3),
                     child: GestureDetector(
-                      onTap: () {
+                      /*onTap: () {
                         if (featuredCategoryResponse
                                 .categories[index].number_of_children >
                             0) {
@@ -235,6 +236,16 @@ class _HomeState extends State<Home> {
                               gravity: Toast.CENTER,
                               duration: Toast.LENGTH_LONG);
                         }
+                      },*/
+                      onTap: () {
+                        Navigator.push(context,
+                            MaterialPageRoute(builder: (context) {
+                              return CategoryProducts(
+                                category_id: featuredCategoryResponse.categories[index].id,
+                                category_name:
+                                featuredCategoryResponse.categories[index].name,
+                              );
+                            }));
                       },
                       child: Card(
                         clipBehavior: Clip.antiAliasWithSaveLayer,

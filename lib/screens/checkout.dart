@@ -49,10 +49,10 @@ class _CheckoutState extends State<Checkout> {
     super.initState();
 
     /*print("user data");
-    print(is_logged_in.$);
-    print(access_token.$);
-    print(user_id.$);
-    print(user_name.$);*/
+    print(is_logged_in.value);
+    print(access_token.value);
+    print(user_id.value);
+    print(user_name.value);*/
 
     fetchAll();
   }
@@ -66,7 +66,7 @@ class _CheckoutState extends State<Checkout> {
   fetchAll() {
     fetchList();
 
-    if (is_logged_in.$ == true) {
+    if (is_logged_in.value == true) {
       fetchSummary();
     }
   }
@@ -262,7 +262,7 @@ class _CheckoutState extends State<Checkout> {
       })).then((value) {
         onPopped(value);
       });
-    } else if (_selected_payment_method == "sslcommerz_payment") {
+    }else if (_selected_payment_method == "sslcommerz_payment") {
       if (_grandTotalValue == 0.00) {
         ToastComponent.showDialog("Nothing to pay", context,
             gravity: Toast.CENTER, duration: Toast.LENGTH_LONG);

@@ -70,6 +70,7 @@ class _OrderListState extends State<OrderList> {
 
   @override
   void initState() {
+
     init();
     super.initState();
 
@@ -122,13 +123,14 @@ class _OrderListState extends State<OrderList> {
 
   reset() {
     _orderList.clear();
-    _isInitial = true;
-    _page = 1;
-    _totalData = 0;
-    _showLoadingContainer = false;
+     _isInitial = true;
+     _page = 1;
+     _totalData = 0;
+     _showLoadingContainer = false;
+
   }
 
-  resetFilterKeys() {
+  resetFilterKeys(){
     _defaultPaymentStatusKey = '';
     _defaultDeliveryStatusKey = '';
 
@@ -151,11 +153,14 @@ class _OrderListState extends State<OrderList> {
         _selectedDeliveryStatus = _dropdownDeliveryStatusItems[x].value;
       }
     }
-    setState(() {});
+    setState(() {
+
+    });
     fetchData();
   }
 
   fetchData() async {
+
     var orderResponse = await OrderRepository().getOrderList(
         page: _page,
         payment_status: _selectedPaymentStatus.option_key,
@@ -349,8 +354,10 @@ class _OrderListState extends State<OrderList> {
                 Padding(
                   padding: MediaQuery.of(context).viewPadding.top >
                           30 //MediaQuery.of(context).viewPadding.top is the statusbar height, with a notch phone it results almost 50, without a notch it shows 24.0.For safety we have checked if its greater than thirty
-                      ? const EdgeInsets.only(top: 36.0)
-                      : const EdgeInsets.only(top: 14.0),
+                      ? const EdgeInsets.only(
+                          top: 36.0)
+                      : const EdgeInsets.only(
+                          top: 14.0),
                   child: buildTopAppBarContainer(),
                 ),
                 buildBottomAppBar(context)
@@ -435,9 +442,7 @@ class _OrderListState extends State<OrderList> {
                     onTap: () {
                       Navigator.push(context,
                           MaterialPageRoute(builder: (context) {
-                        return OrderDetails(
-                          id: _orderList[index].id,
-                        );
+                        return OrderDetails(id:_orderList[index].id,);
                       }));
                     },
                     child: buildOrderListItemCard(index),

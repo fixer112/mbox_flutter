@@ -1,5 +1,6 @@
 import 'package:active_ecommerce_flutter/app_config.dart';
 import 'package:active_ecommerce_flutter/my_theme.dart';
+import 'package:active_ecommerce_flutter/social_config.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:active_ecommerce_flutter/custom/input_decorations.dart';
@@ -13,6 +14,12 @@ import 'package:active_ecommerce_flutter/custom/toast_component.dart';
 import 'package:toast/toast.dart';
 import 'package:active_ecommerce_flutter/repositories/auth_repository.dart';
 import 'package:active_ecommerce_flutter/helpers/auth_helper.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import 'dart:async';
+import 'package:flutter_facebook_login/flutter_facebook_login.dart';
+import 'package:google_sign_in/google_sign_in.dart';
+import 'package:flutter_twitter_login/flutter_twitter_login.dart';
 
 class Login extends StatefulWidget {
   @override
@@ -22,7 +29,7 @@ class Login extends StatefulWidget {
 class _LoginState extends State<Login> {
   String _login_by = "email"; //phone or email
   String initialCountry = 'US';
-  PhoneNumber phoneCode = PhoneNumber(isoCode: 'US',dialCode: "+1");
+  PhoneNumber phoneCode = PhoneNumber(isoCode: 'US', dialCode: "+1");
   String _phone = "";
 
   //controllers
@@ -76,6 +83,126 @@ class _LoginState extends State<Login> {
       Navigator.push(context, MaterialPageRoute(builder: (context) {
         return Main();
       }));
+    }
+  }
+
+  onPressedFacebookLogin() async {
+    final facebookLogin = FacebookLogin();
+    final facebookLoginResult = await facebookLogin.logIn(['email']);
+
+    /*print(facebookLoginResult.accessToken);
+    print(facebookLoginResult.accessToken.token);
+    print(facebookLoginResult.accessToken.expires);
+    print(facebookLoginResult.accessToken.permissions);
+    print(facebookLoginResult.accessToken.userId);
+    print(facebookLoginResult.accessToken.isValid());
+
+    print(facebookLoginResult.errorMessage);
+    print(facebookLoginResult.status);*/
+
+    final token = facebookLoginResult.accessToken.token;
+
+    /// for profile details also use the below code
+    final graphResponse = await http.get(
+        'https://graph.facebook.com/v2.12/me?fields=name,first_name,last_name,email&access_token=$token');
+    final profile = json.decode(graphResponse.body);
+    //print(profile);
+    /*from profile you will get the below params
+    {
+     "name": "Iiro Krankka",
+     "first_name": "Iiro",
+     "last_name": "Krankka",
+     "email": "iiro.krankka\u0040gmail.com",
+     "id": "<user id here>"
+    }*/
+
+    var loginResponse = await AuthRepository().getSocialLoginResponse(
+        profile['name'], profile['email'], profile['id'].toString());
+
+    if (loginResponse.result == false) {
+      ToastComponent.showDialog(loginResponse.message, context,
+          gravity: Toast.CENTER, duration: Toast.LENGTH_LONG);
+    } else {
+      ToastComponent.showDialog(loginResponse.message, context,
+          gravity: Toast.CENTER, duration: Toast.LENGTH_LONG);
+      AuthHelper().setUserData(loginResponse);
+      Navigator.push(context, MaterialPageRoute(builder: (context) {
+        return Main();
+      }));
+    }
+  }
+
+  onPressedGoogleLogin() async {
+    GoogleSignIn _googleSignIn = GoogleSignIn(
+      scopes: [
+        'email',
+        // you can add extras if you require
+      ],
+    );
+
+    _googleSignIn.signIn().then((GoogleSignInAccount acc) async {
+      GoogleSignInAuthentication auth = await acc.authentication;
+      print(acc.id);
+      print(acc.email);
+      print(acc.displayName);
+      print(acc.photoUrl);
+
+      acc.authentication.then((GoogleSignInAuthentication auth) async {
+        print(auth.idToken);
+        print(auth.accessToken);
+
+        //---------------------------------------------------
+        var loginResponse = await AuthRepository().getSocialLoginResponse(
+            acc.displayName, acc.email, auth.accessToken);
+
+        if (loginResponse.result == false) {
+          ToastComponent.showDialog(loginResponse.message, context,
+              gravity: Toast.CENTER, duration: Toast.LENGTH_LONG);
+        } else {
+          ToastComponent.showDialog(loginResponse.message, context,
+              gravity: Toast.CENTER, duration: Toast.LENGTH_LONG);
+          AuthHelper().setUserData(loginResponse);
+          Navigator.push(context, MaterialPageRoute(builder: (context) {
+            return Main();
+          }));
+        }
+
+        //-----------------------------------
+      });
+    });
+  }
+
+  onPressedTwitterLogin() async {
+    final TwitterLogin twitterLogin = TwitterLogin(
+      consumerKey: SocialConfig().twitter_consumer_key,
+      consumerSecret: SocialConfig().twitter_consumer_secret,
+    );
+
+    final TwitterLoginResult result = await twitterLogin.authorize();
+
+    if (result.status == TwitterLoginStatus.cancelledByUser) {
+      ToastComponent.showDialog('Login cancelled by user.', context,
+          gravity: Toast.CENTER, duration: Toast.LENGTH_LONG);
+    } else if (result.status == TwitterLoginStatus.error) {
+      ToastComponent.showDialog('Login error: ${result.errorMessage}', context,
+          gravity: Toast.CENTER, duration: Toast.LENGTH_LONG);
+    } else if (result.status == TwitterLoginStatus.loggedIn) {
+      var loginResponse = await AuthRepository().getSocialLoginResponse(
+          result.session.username,
+          result.session.userId,
+          result.session.token.toString());
+
+      if (loginResponse.result == false) {
+        ToastComponent.showDialog(loginResponse.message, context,
+            gravity: Toast.CENTER, duration: Toast.LENGTH_LONG);
+      } else {
+        ToastComponent.showDialog(loginResponse.message, context,
+            gravity: Toast.CENTER, duration: Toast.LENGTH_LONG);
+        AuthHelper().setUserData(loginResponse);
+        Navigator.push(context, MaterialPageRoute(builder: (context) {
+          return Main();
+        }));
+      }
     }
   }
 
@@ -191,8 +318,9 @@ class _LoginState extends State<Login> {
                                   ignoreBlank: false,
                                   autoValidateMode: AutovalidateMode.disabled,
                                   selectorTextStyle:
-                                  TextStyle(color: MyTheme.font_grey),
-                                  textStyle: TextStyle(color: MyTheme.font_grey),
+                                      TextStyle(color: MyTheme.font_grey),
+                                  textStyle:
+                                      TextStyle(color: MyTheme.font_grey),
                                   initialValue: phoneCode,
                                   textFieldController: _phoneNumberController,
                                   formatInput: true,
@@ -338,7 +466,7 @@ class _LoginState extends State<Login> {
                           ),
                         ),
                       ),
-                     /* Padding(
+                      Padding(
                         padding: const EdgeInsets.only(top: 20.0),
                         child: Center(
                             child: Text(
@@ -355,24 +483,41 @@ class _LoginState extends State<Login> {
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                Container(
-                                  width: 28,
-                                  child: Image.asset("assets/google_logo.png"),
+                                InkWell(
+                                  onTap: () {
+                                    onPressedGoogleLogin();
+                                  },
+                                  child: Container(
+                                    width: 28,
+                                    child:
+                                        Image.asset("assets/google_logo.png"),
+                                  ),
                                 ),
-                                Container(
-                                  width: 28,
-                                  child:
-                                      Image.asset("assets/facebook_logo.png"),
+                                InkWell(
+                                  onTap: () {
+                                    onPressedFacebookLogin();
+                                  },
+                                  child: Container(
+                                    width: 28,
+                                    child:
+                                        Image.asset("assets/facebook_logo.png"),
+                                  ),
                                 ),
-                                Container(
-                                  width: 28,
-                                  child: Image.asset("assets/twitter_logo.png"),
+                                InkWell(
+                                  onTap: () {
+                                    onPressedTwitterLogin();
+                                  },
+                                  child: Container(
+                                    width: 28,
+                                    child:
+                                        Image.asset("assets/twitter_logo.png"),
+                                  ),
                                 ),
                               ],
                             ),
                           ),
                         ),
-                      ),*/
+                      ),
                     ],
                   ),
                 )

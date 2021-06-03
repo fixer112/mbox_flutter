@@ -98,7 +98,7 @@ class _StripeScreenState extends State<StripeScreen> {
 
   buildBody() {
     String initial_url =
-        "${AppConfig.BASE_URL}/stripe?payment_type=${widget.payment_type}&order_id=${_order_id}&amount=${widget.amount}&user_id=${user_id.$}";
+        "${AppConfig.BASE_URL}/stripe?payment_type=${widget.payment_type}&order_id=${_order_id}&amount=${widget.amount}&user_id=${user_id.value}";
 
     //print("init url");
     //print(initial_url);
