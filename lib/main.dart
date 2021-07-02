@@ -9,20 +9,18 @@ import 'package:active_ecommerce_flutter/helpers/shared_value_helper.dart';
 import 'dart:async';
 import 'package:active_ecommerce_flutter/repositories/auth_repository.dart';
 
-
- main() async {
+main() async {
   WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,
   ]);
 
-  fetch_user() async{
-    var userByTokenResponse =
-    await AuthRepository().getUserByTokenResponse();
+  fetch_user() async {
+    var userByTokenResponse = await AuthRepository().getUserByTokenResponse();
 
     if (userByTokenResponse.result == true) {
-      is_logged_in.value  = true;
+      is_logged_in.value = true;
       user_id.value = userByTokenResponse.id;
       user_name.value = userByTokenResponse.name;
       user_email.value = userByTokenResponse.email;
@@ -30,18 +28,10 @@ import 'package:active_ecommerce_flutter/repositories/auth_repository.dart';
       avatar_original.value = userByTokenResponse.avatar_original;
     }
   }
+
   access_token.load().whenComplete(() {
     fetch_user();
   });
-
-
-
-
-
-
-
-
-
 
   /*is_logged_in.load();
   user_id.load();
@@ -55,7 +45,6 @@ import 'package:active_ecommerce_flutter/repositories/auth_repository.dart';
     systemNavigationBarDividerColor: Colors.transparent,
   ));
 
-
   runApp(
     SharedValue.wrapApp(
       MyApp(),
@@ -67,11 +56,9 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-
-
     final textTheme = Theme.of(context).textTheme;
     return MaterialApp(
-      title: 'Active Ecommerce Cms',
+      title: 'Mbox',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         primaryColor: MyTheme.white,

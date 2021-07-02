@@ -466,7 +466,7 @@ class _LoginState extends State<Login> {
                           ),
                         ),
                       ),
-                      Padding(
+                      /* Padding(
                         padding: const EdgeInsets.only(top: 20.0),
                         child: Center(
                             child: Text(
@@ -518,6 +518,7 @@ class _LoginState extends State<Login> {
                           ),
                         ),
                       ),
+                     */
                     ],
                   ),
                 )

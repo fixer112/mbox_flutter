@@ -203,7 +203,7 @@ packages:
       name: connectivity
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.4.9+5"
+    version: "2.0.2"
   connectivity_for_web:
     dependency: transitive
     description:
@@ -413,9 +413,11 @@ packages:
   flutter_twitter_login:
     dependency: "direct main"
     description:
-      name: flutter_twitter_login
-      url: "https://pub.dartlang.org"
-    source: hosted
+      path: "."
+      ref: HEAD
+      resolved-ref: aba1223f224fd46b564d582e1f9af82f1a2df7d0
+      url: "git://github.com/eudangeld/flutter_twitter_login.git"
+    source: git
     version: "1.1.0"
   flutter_web_plugins:
     dependency: transitive

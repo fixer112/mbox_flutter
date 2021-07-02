@@ -31,3 +31,12 @@ subprojects {
 task clean(type: Delete) {
     delete rootProject.buildDir
 }
+
+ext {
+    supportLibraryVersion= '27.1.0'
+}
+
+configurations.all {
+resolutionStrategy {
+    force 'com.android.support:support-v4:27.1.0'
+}}

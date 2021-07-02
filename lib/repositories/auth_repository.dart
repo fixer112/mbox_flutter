@@ -19,11 +19,14 @@ class AuthRepository {
 
     final response = await http.post("${AppConfig.BASE_URL}/auth/login",
         headers: {"Content-Type": "application/json"}, body: post_body);
+    print(response.body);
     return loginResponseFromJson(response.body);
   }
-  Future<LoginResponse> getSocialLoginResponse(
-  @required String name ,@required String email, @required String provider) async {
-    var post_body = jsonEncode({"name": "${name}", "email": "${email}", "provider": "$provider"});
+
+  Future<LoginResponse> getSocialLoginResponse(@required String name,
+      @required String email, @required String provider) async {
+    var post_body = jsonEncode(
+        {"name": "${name}", "email": "${email}", "provider": "$provider"});
 
     final response = await http.post("${AppConfig.BASE_URL}/auth/social-login",
         headers: {"Content-Type": "application/json"}, body: post_body);
@@ -31,13 +34,10 @@ class AuthRepository {
     return loginResponseFromJson(response.body);
   }
 
-
   Future<LogoutResponse> getLogoutResponse() async {
     final response = await http.get(
       "${AppConfig.BASE_URL}/auth/logout",
-      headers: {
-        "Authorization": "Bearer ${access_token.value}"
-      },
+      headers: {"Authorization": "Bearer ${access_token.value}"},
     );
 
     print(response.body);

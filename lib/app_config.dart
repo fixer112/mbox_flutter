@@ -8,11 +8,11 @@ class AppConfig {
   static String app_name = "Mbox"; //this shows in the splash screen
 
   //configure this
-  static const bool HTTPS = false;
+  static const bool HTTPS = true;
 
   //configure this
   static const DOMAIN_PATH =
-      "10.0.2.2:8000"; //"access.mboxexpress.com";//"192.168.0.106/ecommerce_demo_two"; //localhost
+      /*  "10.0.2.2:8000"; */ "access.mboxexpress.com"; //"192.168.0.106/ecommerce_demo_two"; //localhost
   //static const DOMAIN_PATH = "demo.activeitzone.com/ecommerce_flutter_demo"; //inside a folder
   //static const DOMAIN_PATH = "www.gaighat.com"; // directly inside the public folder
 
